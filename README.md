@@ -98,9 +98,142 @@ Presenter - презентер содержит основную логику п
 `emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
 `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
 
-Методы класса:  
-`on<T extends object>(event: EventName, callback: (data: T) => void): void` - подписка на событие, принимает название события и функцию обработчик.  
-`emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
-`trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
-<!-- fff -->
-<!-- dddd -->
+# Данные
+
+## Интерфейсы данных
+
+### Интерфейс товара (IProduct)
+
+interface IProduct {
+  id: string;
+  description: string;
+  image: string;
+  title: string;
+  category: string;
+  price: number | null;
+}
+
+### Интерфейс покупателя (IBuyer)
+
+type TPayment = 'card' | 'cash' | '';
+
+interface IBuyer {
+  payment: TPayment;
+  email: string;
+  phone: string;
+  address: string;
+}
+
+### Интерфейс ошибок валидации (IValidationErrors)
+
+interface IValidationErrors {
+  payment?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+}
+
+### Типы для API
+
+export interface IOrderResult {
+  id: string;
+  total: number;
+}
+
+export interface IOrderRequest {
+  payment: TPayment;
+  email: string;
+  phone: string;
+  address: string;
+  items: string[];
+}
+
+export interface IProductList {
+  total: number;
+  items: IProduct[];
+}
+
+## Модели данных
+
+### Класс (Catalog)
+
+constructor(products?: IProduct[])
+
+private products: IProduct[] - хранит массив всех товаров каталога
+
+private selectedProduct: IProduct | null - хранит товар, выбранный для детального просмотра
+
+// Сохраняет массив товаров в каталог
+setProducts(products: IProduct[]): void
+
+// Возвращает массив всех товаров каталога
+getProducts(): IProduct[]
+
+// Возвращает товар по идентификатору или undefined если не найден
+getProductById(id: string): IProduct | undefined
+
+// Сохраняет товар для детального просмотра
+setSelectedProduct(product: IProduct): void
+
+// Возвращает товар, выбранный для детального просмотра
+getSelectedProduct(): IProduct | null
+
+### Класс (Cart)
+
+constructor(items?: IProduct[])
+
+private items: IProduct[] - хранит массив товаров, добавленных в корзину
+
+// Возвращает массив всех товаров в корзине
+getItems(): IProduct[]
+
+// Добавляет товар в корзину
+addItem(product: IProduct): void
+
+// Удаляет товар из корзины
+removeItem(product: IProduct): void
+
+// Очищает корзину (удаляет все товары)
+clear(): void
+
+// Возвращает общую стоимость всех товаров в корзине
+getTotalPrice(): number
+
+// Возвращает общее количество товаров в корзине
+getTotalCount(): number
+
+// Проверяет наличие товара в корзине по идентификатору
+contains(productId: string): boolean
+
+### Класс (Buyer)
+
+constructor(data?: Partial<IBuyer>)
+
+private data: IBuyer - хранит все данные покупателя
+
+// Сохраняет данные покупателя (частичное обновление)
+setData(data: Partial<IBuyer>): void
+
+// Возвращает все данные покупателя
+getData(): IBuyer
+
+// Очищает все данные покупателя
+clear(): void
+
+// Валидирует данные покупателя и возвращает объект с ошибками
+validate(): IValidationErrors
+
+// Проверяет валидность всех данных покупателя
+isValid(): boolean
+
+## Слой коммуникации
+
+### Класс (WebLarekAPI)
+
+constructor(base: IApi, baseUri: string)
+
+// Получает список товаров с сервера
+getProductList(): Promise<IProduct[]>
+
+// Отправляет заказ на сервер
+createOrder(order: IOrderRequest): Promise<IOrderResult>
