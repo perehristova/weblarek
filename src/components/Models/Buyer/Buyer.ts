@@ -12,12 +12,6 @@ export class Buyer {
         address: ''
     };
 
-    constructor(data ? : Partial < IBuyer > ) {
-        if (data) {
-            this.setData(data);
-        }
-    }
-
     setData(data: Partial < IBuyer > ): void {
         this.data = {
             ...this.data,

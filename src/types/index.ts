@@ -6,7 +6,7 @@ export interface IApi {
 }
 
 // Существующие типы данных
-export type TPayment = 'card' | 'cash' | '';
+export type TPayment = 'online' | 'cash' | '';
 
 export interface IProduct {
     id: string;
@@ -37,12 +37,9 @@ export interface IOrderResult {
     total: number;
 }
 
-export interface IOrderRequest {
-    payment: TPayment;
-    email: string;
-    phone: string;
-    address: string;
-    items: string[]; // массив ID товаров
+export interface IOrderRequest extends IBuyer {
+  items: string[]; // массив ID товаров
+  total: number;   // общая стоимость заказа
 }
 
 export interface IProductList {

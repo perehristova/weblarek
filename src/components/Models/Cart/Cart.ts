@@ -5,12 +5,6 @@ import {
 export class Cart {
     private items: IProduct[] = [];
 
-    constructor(items ? : IProduct[]) {
-        if (items) {
-            this.items = items;
-        }
-    }
-
     getItems(): IProduct[] {
         return this.items;
     }
