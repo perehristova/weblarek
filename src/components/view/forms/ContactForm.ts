@@ -11,7 +11,7 @@ import {
     EventEmitter
 } from '../../base/Events';
 
-export class OrderFormStep2 extends Form < IBuyer > {
+export class ContactForm extends Form < IBuyer > {
     private emailInput: HTMLInputElement;
     private phoneInput: HTMLInputElement;
 
@@ -61,7 +61,7 @@ export class OrderFormStep2 extends Form < IBuyer > {
 
         if (Object.keys(errors).length === 0) {
             const formData = this.getFormData();
-            this.events.emit('order:submit:step2', formData);
+            this.events.emit('contact:submit', formData);
         } else {
             this.showErrors(errors);
         }

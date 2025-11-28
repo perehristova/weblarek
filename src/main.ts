@@ -1,51 +1,21 @@
 import './scss/styles.scss';
-import {
-    Catalog
-} from './components/Models/Catalog/Catalog';
-import {
-    Cart
-} from './components/Models/Cart/Cart';
-import {
-    Buyer
-} from './components/Models/Buyer/Buyer';
-import {
-    WebLarekAPI
-} from './services/WebLarekAPI';
-import {
-    Api
-} from './components/base/Api';
-import {
-    API_URL
-} from './utils/constants';
-import {
-    EventEmitter
-} from './components/base/Events';
+import { Catalog } from './components/Models/Catalog/Catalog';
+import { Cart } from './components/Models/Cart/Cart';
+import { Buyer } from './components/Models/Buyer/Buyer';
+import { WebLarekAPI } from './services/WebLarekAPI';
+import { Api } from './components/base/Api';
+import { API_URL } from './utils/constants';
+import { EventEmitter } from './components/base/Events';
 
 // Компоненты View
-import {
-    CatalogView
-} from './components/view/layout/CatalogView';
-import {
-    CartView
-} from './components/view/layout/CartView';
-import {
-    Header
-} from './components/view/layout/Header';
-import {
-    Modal
-} from './components/view/modals/Modal';
-import {
-    ProductModal
-} from './components/view/modals/ProductModal';
-import {
-    SuccessModal
-} from './components/view/modals/SuccessModal';
-import {
-    OrderFormStep1
-} from './components/view/forms/OrderFormStep1';
-import {
-    OrderFormStep2
-} from './components/view/forms/OrderFormStep2';
+import { CatalogView } from './components/view/layout/CatalogView';
+import { CartView } from './components/view/layout/CartView';
+import { Header } from './components/view/layout/Header';
+import { Modal } from './components/view/modals/Modal';
+import { ProductModal } from './components/view/modals/ProductModal';
+import { SuccessModal } from './components/view/modals/SuccessModal';
+import { PaymentForm } from './components/view/forms/PaymentForm';
+import { ContactForm } from './components/view/forms/ContactForm';
 
 // Менеджер событий
 const events = new EventEmitter();
@@ -98,8 +68,8 @@ const header = new Header(events);
 const modal = new Modal(events);
 const productModal = new ProductModal(events, modal);
 const successModal = new SuccessModal(events);
-const orderFormStep1 = new OrderFormStep1(events);
-const orderFormStep2 = new OrderFormStep2(events);
+const paymentForm = new PaymentForm(events);
+const contactForm = new ContactForm(events);
 
 // ===== ОБРАБОТКА СОБЫТИЙ КАТАЛОГА =====
 
@@ -134,42 +104,36 @@ events.on('cart:changed', () => {
     const items = cartModel.getItems();
     const total = cartModel.getTotalPrice();
     const count = cartModel.getTotalCount();
-
+    
     header.render(count);
-    cartView.render({
-        items,
-        total
-    });
+    cartView.render({ items, total });
 });
 
 events.on('cart:open', () => {
     const items = cartModel.getItems();
     const total = cartModel.getTotalPrice();
-    const cartContent = cartView.render({
-        items,
-        total
-    });
+    const cartContent = cartView.render({ items, total });
     modal.open(cartContent);
 });
 
 events.on('cart:checkout', () => {
     modal.close();
-    const formContent = orderFormStep1.render(buyerModel.getData());
+    const formContent = paymentForm.render(buyerModel.getData());
     modal.open(formContent);
 });
 
 // ===== ОБРАБОТКА ФОРМ ЗАКАЗА =====
 
-events.on('order:submit:step1', (data: any) => {
+events.on('payment:submit', (data: any) => {
     setBuyerData(data);
     modal.close();
-    const formContent = orderFormStep2.render(buyerModel.getData());
+    const formContent = contactForm.render(buyerModel.getData());
     modal.open(formContent);
 });
 
-events.on('order:submit:step2', async (data: any) => {
+events.on('contact:submit', async (data: any) => { // ← ДОБАВЛЕН async
     setBuyerData(data);
-
+    
     try {
         const orderData = {
             payment: buyerModel.getData().payment,
@@ -181,12 +145,10 @@ events.on('order:submit:step2', async (data: any) => {
         };
 
         await api.createOrder(orderData);
-
+        
         modal.close();
-        successModal.open(modal, {
-            total: cartModel.getTotalPrice()
-        });
-
+        successModal.open(modal, { total: cartModel.getTotalPrice() });
+        
     } catch (error) {
         console.error('Ошибка при оформлении заказа:', error);
     }
@@ -203,16 +165,6 @@ events.on('success:close', () => {
     try {
         const products = await api.getProductList();
         setCatalogProducts(products);
-    } catch (error) {
-        console.error('Ошибка при загрузке товаров:', error);
-    }
-})();
-
-(async () => {
-    try {
-        const products = await api.getProductList();
-        console.log('Данные товаров:', products);
-        catalogModel.setProducts(products);
     } catch (error) {
         console.error('Ошибка при загрузке товаров:', error);
     }

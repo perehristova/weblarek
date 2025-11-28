@@ -12,7 +12,7 @@ import {
     EventEmitter
 } from '../../base/Events';
 
-export class OrderFormStep1 extends Form < IBuyer > {
+export class PaymentForm extends Form < IBuyer > {
     private paymentButtons: NodeListOf < HTMLButtonElement > ;
     private addressInput: HTMLInputElement;
     private selectedPayment: TPayment = '';
@@ -81,7 +81,7 @@ export class OrderFormStep1 extends Form < IBuyer > {
         if (Object.keys(errors).length === 0) {
             this.clearErrors();
             const formData = this.getFormData();
-            this.events.emit('order:submit:step1', formData);
+            this.events.emit('payment:submit', formData);
         } else {
             this.showErrors(errors);
         }
