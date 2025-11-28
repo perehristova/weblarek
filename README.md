@@ -189,13 +189,13 @@ export interface IProductList {
 
 ### Класс (Catalog)
 
-constructor(events: EventEmitter)
+constructor()
 
 private products: IProduct[] - хранит массив всех товаров каталога
 
 private selectedProduct: IProduct | null - хранит товар, выбранный для детального просмотра
 
-// Сохраняет массив товаров в каталог и генерирует событие `catalog:changed`
+// Сохраняет массив товаров в каталог
 setProducts(products: IProduct[]): void
 
 // Возвращает массив всех товаров каталога
@@ -212,20 +212,20 @@ getSelectedProduct(): IProduct | null
 
 ### Класс (Cart)
 
-constructor(events: EventEmitter)
+constructor()
 
 private items: IProduct[] - хранит массив товаров, добавленных в корзину
 
 // Возвращает массив всех товаров в корзине
 getItems(): IProduct[]
 
-// Добавляет товар в корзину и генерирует событие `cart:changed`
+// Добавляет товар в корзину
 addItem(product: IProduct): void
 
-// Удаляет товар из корзины и генерирует событие `cart:changed`
+// Удаляет товар из корзины  
 removeItem(product: IProduct): void
 
-// Очищает корзину (удаляет все товары) и генерирует событие `cart:changed`
+// Очищает корзину (удаляет все товары)
 clear(): void
 
 // Возвращает общую стоимость всех товаров в корзине
@@ -239,17 +239,17 @@ contains(productId: string): boolean
 
 ### Класс (Buyer)
 
-constructor(events: EventEmitter)
+constructor()
 
 private data: IBuyer - хранит все данные покупателя
 
-// Сохраняет данные покупателя (частичное обновление) и генерирует событие `buyer:changed`
+// Сохраняет данные покупателя (частичное обновление)
 setData(data: Partial<IBuyer>): void
 
 // Возвращает все данные покупателя
 getData(): IBuyer
 
-// Очищает все данные покупателя и генерирует событие `buyer:changed`
+// Очищает все данные покупателя
 clear(): void
 
 // Валидирует данные покупателя и возвращает объект с ошибками
@@ -303,37 +303,17 @@ createOrder(order: IOrderRequest): Promise<IOrderResult>
 Модальное окно для просмотра товара, использует PreviewCard.
 Генерирует событие `product:open` при открытии.
 
-### OrderFormStep1
+### PaymentForm
 Форма первого шага оформления заказа (оплата и адрес). Использует шаблон `#order`.
-Генерирует событие `order:submit:step1` при отправке.
+Генерирует событие `payment:submit` при отправке.
 
-### OrderFormStep2
+### ContactForm
 Форма второго шага оформления заказа (email и телефон). Использует шаблон `#contacts`.
-Генерирует событие `order:submit:step2` при отправке.
+Генерирует событие `contact:submit` при отправке.
 
 ### SuccessModal
 Модальное окно успешного оформления заказа. Использует шаблон `#success`.
 Генерирует событие `success:close` при закрытии.
-
-## События приложения
-
-### От моделей данных:
-- `catalog:changed` - изменен каталог товаров
-- `cart:changed` - изменено содержимое корзины
-- `buyer:changed` - изменены данные покупателя
-
-### От представлений:
-- `card:select` - выбор карточки товара для просмотра
-- `card:add` - добавление товара в корзину
-- `card:remove` - удаление товара из корзины
-- `cart:open` - открытие корзины
-- `cart:checkout` - оформление заказа
-- `order:submit:step1` - отправка первой формы заказа
-- `order:submit:step2` - отправка второй формы заказа
-- `success:close` - закрытие окна успешного заказа
-- `modal:open` - открытие модального окна
-- `modal:close` - закрытие модального окна
-- `product:open` - открытие просмотра товара
 
 ## Слой Презентера
 
@@ -353,7 +333,8 @@ createOrder(order: IOrderRequest): Promise<IOrderResult>
 ### Особенности:
 - Не содержит собственную генерацию событий
 - Перерисовка View происходит только при событиях от Model
-- Использует обертки для генерации событий при изменении данных моделей
+- Использует **обертки в презентере** для генерации событий при изменении данных моделей
+- Модели данных остаются чистыми и не содержат логики событий
 
 
 ## События приложения
@@ -373,9 +354,9 @@ createOrder(order: IOrderRequest): Promise<IOrderResult>
 - **`cart:checkout`** - оформление заказа
 
 #### Формы заказа:
-- **`order:submit:step1`** - отправка первой формы заказа  
+- **`payment:submit`** - отправка первой формы заказа  
   Данные: `{ payment: TPayment, address: string }`
-- **`order:submit:step2`** - отправка второй формы заказа  
+- **`contact:submit`** - отправка второй формы заказа  
   Данные: `{ email: string, phone: string }`
 
 #### Модальные окна:
