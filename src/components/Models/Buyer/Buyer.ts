@@ -1,6 +1,5 @@
 import {
     IBuyer,
-    TPayment,
     IValidationErrors
 } from '../../../types/index';
 
