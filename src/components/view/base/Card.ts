@@ -1,6 +1,6 @@
 import {
     Component
-} from './Component';
+} from '../base/Component';
 import {
     IProduct
 } from '../../../types';

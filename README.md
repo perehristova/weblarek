@@ -5,25 +5,25 @@
 Структура проекта:
 src/
 ├── components/
-│ ├── base/ # Базовые классы
-│ │ ├── Api.ts
-│ │ ├── Component.ts
-│ │ ├── Events.ts
-│ │ └── Form.ts
-│ ├── models/ # Модели данных
-│ │ ├── Catalog/
-│ │ ├── Cart/
-│ │ └── Buyer/
-│ └── view/ # Компоненты представления
-│ ├── base/ # Базовые компоненты
-│ ├── cards/ # Карточки товаров
-│ ├── layout/ # Компоненты макета
-│ ├── modals/ # Модальные окна
-│ └── forms/ # Формы
-├── services/ # Сервисы API
-├── types/ # Типы TypeScript
-├── utils/ # Утилиты и константы
-└── vendor/ # Стили и ресурсы
+│   ├── base/           # Базовые классы
+│   │   ├── Api.ts
+│   │   ├── Component.ts
+│   │   ├── Events.ts
+│   │   └── Form.ts
+│   ├── Models/         # Модели данных
+│   │   ├── Catalog/
+│   │   ├── Cart/
+│   │   └── Buyer/
+│   └── view/           # Компоненты представления
+│       ├── base/       # Базовые компоненты
+│       ├── cards/      # Карточки товаров
+│       ├── layout/     # Компоненты макета
+│       ├── modals/     # Модальные окна
+│       └── forms/      # Формы
+├── services/           # Сервисы API
+├── types/             # Типы TypeScript
+├── utils/             # Утилиты и константы
+└── vendor/            # Стили и ресурсы
 
 Важные файлы:
 - index.html — HTML-файл главной страницы
@@ -272,103 +272,161 @@ createOrder(order: IOrderRequest): Promise<IOrderResult>
 
 ## Компоненты представления
 
-### CatalogCard
-Карточка товара для отображения в каталоге. Использует шаблон `#card-catalog`.
-Генерирует событие `card:select` при клике.
+#### Класс (Header)
+Компонент шапки страницы. Отвечает за отображение счетчика корзины и управление блокировкой скролла страницы.
 
-### PreviewCard
-Карточка товара для детального просмотра в модальном окне. Использует шаблон `#card-preview`.
-Генерирует события `card:add` и `card:remove` при взаимодействии с кнопкой.
+Конструктор:  
+`constructor(container: HTMLElement, events: EventEmitter)` - принимает корневой элемент и брокер событий.
 
-### CartCard
-Карточка товара для отображения в корзине. Использует шаблон `#card-basket`.
-Генерирует событие `card:remove` при удалении товара.
+Поля класса:
+* `basketButton: HTMLButtonElement` — кнопка/иконка корзины.
+* `counterElement: HTMLElement` — элемент для отображения счетчика товаров.
 
-### CatalogView
-Компонент для отображения всего каталога товаров. Использует контейнер `.gallery`.
+Методы класса:
+* `render(count: number): HTMLElement` — обновляет значение счетчика корзины.
+* `setLocked(isLocked: boolean): void` — блокирует/разблокирует скролл страницы.
+* (Генерирует событие `cart:open` при клике на корзину).
 
-### CartView
-Компонент для отображения корзины. Использует шаблон `#basket`.
-Генерирует событие `cart:checkout` при оформлении заказа.
+#### Класс (CatalogCard)
+Карточка товара для каталога. Наследуется от Card. Использует шаблон `#card-catalog`.
 
-### Header
-Компонент шапки с иконкой корзины и счетчиком товаров.
-Генерирует событие `cart:open` при клике на корзину.
+Конструктор:  
+`constructor(events: EventEmitter, container: HTMLElement)` - принимает шаблон `#card-catalog` и брокер событий.
 
-### Modal
-Базовое модальное окно для отображения любого контента.
-Генерирует события `modal:open` и `modal:close`.
+Поля класса:
+* (Наследует поля разметки от Card: `titleElement`, `priceElement`, и т.д.).
 
-### ProductModal
-Модальное окно для просмотра товара, использует PreviewCard.
-Генерирует событие `product:open` при открытии.
+Методы класса:
+* `render(product: IProduct): HTMLElement` — отображает данные товара.
+* (Генерирует событие `card:select` при клике по карточке).
 
-### PaymentForm
-Форма первого шага оформления заказа (оплата и адрес). Использует шаблон `#order`.
-Генерирует событие `payment:submit` при отправке.
+#### Класс (PreviewCard)
+Карточка товара для детального просмотра. Наследуется от Card. Использует шаблон `#card-preview`.
 
-### ContactForm
-Форма второго шага оформления заказа (email и телефон). Использует шаблон `#contacts`.
-Генерирует событие `contact:submit` при отправке.
+Конструктор:  
+`constructor(events: EventEmitter, container: HTMLElement)` - принимает шаблон `#card-preview` и брокер событий.
 
-### SuccessModal
+Поля класса:
+* `button: HTMLButtonElement` — кнопка "Купить" / "Удалить".
+* `descriptionElement: HTMLElement` — элемент для детального описания.
+* (Наследует поля разметки от Card).
+
+Методы класса:
+* `render(product: IProduct, inCart: boolean): HTMLElement` — отображает данные, устанавливает состояние кнопки.
+* (Генерирует события `card:add` и `card:remove` при взаимодействии с кнопкой).
+
+#### Класс (CartCard)
+Карточка товара для отображения в корзине. Наследуется от Card. Использует шаблон `#card-basket`.
+
+Конструктор:  
+`constructor(events: EventEmitter, container: HTMLElement)` - принимает шаблон `#card-basket` и брокер событий.
+
+Поля класса:
+* `deleteButton: HTMLButtonElement` — кнопка удаления из корзины.
+* `indexElement: HTMLElement` — элемент для отображения порядкового номера.
+* (Наследует поля разметки от Card).
+
+Методы класса:
+* `render(data: { product: IProduct, index: number }): HTMLElement` — отображает данные товара и его номер.
+* (Генерирует событие `card:remove` при удалении товара).
+
+#### Класс (CatalogView)
+Компонент для отображения всего каталога товаров.
+
+Конструктор:  
+`constructor(container: HTMLElement, events: EventEmitter)` - принимает элемент `.gallery` и брокер событий.
+
+Поля класса:
+* (Использует только `this.container` для размещения карточек).
+
+Методы класса:
+* `render(products: IProduct[]): HTMLElement` — очищает контейнер и добавляет в него карточки.
+
+#### Класс (CartView)
+Компонент для отображения содержимого корзины. Использует шаблон `#basket`.
+
+Конструктор:  
+`constructor(container: HTMLElement, events: EventEmitter)` - принимает шаблон `#basket` и брокер событий.
+
+Поля класса:
+* `listElement: HTMLElement` — контейнер для карточек товаров.
+* `totalElement: HTMLElement` — элемент для отображения общей стоимости.
+* `buttonElement: HTMLButtonElement` — кнопка оформления заказа.
+
+Методы класса:
+* `render(data: ICartViewData): HTMLElement` — отображает список товаров, общую сумму и управляет кнопкой.
+* (Генерирует событие `cart:checkout` при оформлении заказа).
+
+#### Класс (Modal)
+Базовое модальное окно.
+
+Конструктор:  
+`constructor(container: HTMLElement, events: EventEmitter)` - принимает элемент `#modal-container` и брокер событий.
+
+Поля класса:
+* `closeButton: HTMLButtonElement` — кнопка закрытия (крестик).
+* `contentElement: HTMLElement` — контейнер для встраивания контента.
+
+Методы класса:
+* `open(content: HTMLElement): void` — открывает модальное окно.
+* `close(): void` — закрывает модальное окно.
+* (Генерирует события `modal:open` и `modal:close`).
+
+#### Класс (ProductModal)
+Модальное окно для просмотра товара.
+
+Конструктор:  
+`constructor(modal: Modal, events: EventEmitter, template: HTMLElement)` - принимает экземпляр базового модального окна, брокер событий и шаблон.
+
+Поля класса:
+* `previewCard: PreviewCard` — экземпляр карточки для детального просмотра.
+
+Методы класса:
+* `open(product: IProduct, inCart: boolean): void` — открывает модальное окно с деталями товара.
+* `updateCartState(product: IProduct, inCart: boolean): void` — обновляет состояние кнопки Купить/Удалить в открытом модальном окне.
+* (Генерирует событие `product:open` при открытии).
+
+#### Класс (PaymentForm)
+Форма первого шага оформления заказа. Наследуется от Form. Использует шаблон `#order`.
+
+Конструктор:  
+`constructor(events: EventEmitter, container: HTMLFormElement)` - принимает брокер событий и шаблон `#order`.
+
+Поля класса:
+* `cardButton: HTMLButtonElement` — кнопка оплаты картой.
+* `cashButton: HTMLButtonElement` — кнопка оплаты наличными.
+* `addressInput: HTMLInputElement` — поле ввода адреса.
+* (Наследует поля разметки от Form).
+
+Методы класса:
+* `render(data: IBuyer): HTMLElement` — отображает текущие данные покупателя и ошибки.
+* (Генерирует событие `payment:submit` при успешной отправке).
+
+#### Класс (ContactForm)
+Форма второго шага оформления заказа. Наследуется от Form. Использует шаблон `#contacts`.
+
+Конструктор:  
+`constructor(events: EventEmitter, container: HTMLFormElement)` - принимает брокер событий и шаблон `#contacts`.
+
+Поля класса:
+* `emailInput: HTMLInputElement` — поле ввода почты.
+* `phoneInput: HTMLInputElement` — поле ввода телефона.
+* (Наследует поля разметки от Form).
+
+Методы класса:
+* `render(data: IBuyer): HTMLElement` — отображает текущие данные покупателя и ошибки.
+* (Генерирует событие `contact:submit` при успешной отправке).
+
+#### Класс (SuccessModal)
 Модальное окно успешного оформления заказа. Использует шаблон `#success`.
-Генерирует событие `success:close` при закрытии.
 
-## Слой Презентера
+Конструктор:  
+`constructor(container: HTMLElement, events: EventEmitter)` - принимает шаблон `#success` и брокер событий.
 
-### Реализация:
-Презентер реализован в файле `src/main.ts` как набор обработчиков событий без выделения в отдельный класс.
+Поля класса:
+* `closeButton: HTMLButtonElement` — кнопка закрытия.
+* `totalElement: HTMLElement` — элемент для отображения итоговой суммы заказа.
 
-### Принципы работы:
-- **Координация** - связывает Model и View через события
-- **Обработка событий** - реагирует на действия пользователя и изменения данных
-- **Подготовка данных** - преобразует данные моделей для отображения в View
-- **Бизнес-логика** - управляет потоком приложения (добавление в корзину, оформление заказа)
-
-### Обработка событий:
-- События от **View** → изменение данных в **Model**
-- События от **Model** → обновление отображения в **View**
-
-### Особенности:
-- Не содержит собственную генерацию событий
-- Перерисовка View происходит только при событиях от Model
-- Использует **обертки в презентере** для генерации событий при изменении данных моделей
-- Модели данных остаются чистыми и не содержат логики событий
-
-
-## События приложения
-
-### От компонентов View:
-
-#### Карточки товаров:
-- **`card:select`** - выбор карточки товара для просмотра  
-  Данные: `{ product: IProduct }`
-- **`card:add`** - добавление товара в корзину  
-  Данные: `{ product: IProduct, fromModal: boolean }`
-- **`card:remove`** - удаление товара из корзины  
-  Данные: `{ product: IProduct, fromModal: boolean }`
-
-#### Корзина и навигация:
-- **`cart:open`** - открытие корзины
-- **`cart:checkout`** - оформление заказа
-
-#### Формы заказа:
-- **`payment:submit`** - отправка первой формы заказа  
-  Данные: `{ payment: TPayment, address: string }`
-- **`contact:submit`** - отправка второй формы заказа  
-  Данные: `{ email: string, phone: string }`
-
-#### Модальные окна:
-- **`modal:open`** - открытие модального окна
-- **`modal:close`** - закрытие модального окна
-- **`product:open`** - открытие просмотра товара  
-  Данные: `{ product: IProduct }`
-- **`success:close`** - закрытие окна успешного заказа
-
-### От моделей данных (через обертки в презентере):
-- **`catalog:changed`** - изменен каталог товаров  
-  Данные: `IProduct[]`
-- **`cart:changed`** - изменено содержимое корзины
-- **`buyer:changed`** - изменены данные покупателя  
-  Данные: `IBuyer`
+Методы класса:
+* `render(data: { total: number }): HTMLElement` — отображает итоговую сумму заказа.
+* (Генерирует событие `success:close` при закрытии).

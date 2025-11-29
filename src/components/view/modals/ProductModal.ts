@@ -1,3 +1,5 @@
+// ProductModal.ts
+
 import {
     Component
 } from '../base/Component';
@@ -18,14 +20,12 @@ export class ProductModal extends Component < null > {
     private events: EventEmitter;
     private modal: Modal;
     private previewCard: PreviewCard;
-    private currentProduct: IProduct | null = null;
 
-    constructor(events: EventEmitter, modal: Modal) {
+    constructor(modal: Modal, events: EventEmitter, previewTemplate: HTMLElement) {
         super(document.createElement('div'));
-
         this.events = events;
         this.modal = modal;
-        this.previewCard = new PreviewCard(events);
+        this.previewCard = new PreviewCard(events, previewTemplate);
     }
 
     render(): HTMLElement {
@@ -33,10 +33,9 @@ export class ProductModal extends Component < null > {
     }
 
     open(product: IProduct, inCart: boolean = false): void {
-        this.currentProduct = product;
-
         const productContent = this.previewCard.render(product, inCart);
         this.modal.open(productContent);
+
         this.events.emit('product:open', {
             product
         });
@@ -44,13 +43,10 @@ export class ProductModal extends Component < null > {
 
     close(): void {
         this.modal.close();
-        this.currentProduct = null;
     }
 
-    updateCartState(inCart: boolean): void {
-        if (this.currentProduct) {
-            const productContent = this.previewCard.render(this.currentProduct, inCart);
-            this.modal.setContent(productContent);
-        }
+    updateCartState(product: IProduct, inCart: boolean): void {
+        const productContent = this.previewCard.render(product, inCart);
+        this.modal.setContent(productContent);
     }
 }

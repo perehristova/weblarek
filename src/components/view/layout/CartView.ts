@@ -25,11 +25,10 @@ export class CartView extends Component < ICartViewData > {
     private totalElement: HTMLElement;
     private buttonElement: HTMLButtonElement;
 
-    constructor(events: EventEmitter) {
-        const template = document.getElementById('basket') as HTMLTemplateElement;
-        super(cloneTemplate(template));
-
+    constructor(container: HTMLElement, events: EventEmitter) {
+        super(container);
         this.events = events;
+
         this.listElement = this.container.querySelector('.basket__list') !;
         this.totalElement = this.container.querySelector('.basket__price') !;
         this.buttonElement = this.container.querySelector('.basket__button') !;
@@ -55,13 +54,18 @@ export class CartView extends Component < ICartViewData > {
     }
 
     private renderItems(items: IProduct[]): void {
+        const templateSelector = '#card-basket';
+
         items.forEach((item, index) => {
-            const card = new CartCard(this.events);
-            const cardElement = card.render({
+            const cardElement = cloneTemplate < HTMLElement > (templateSelector);
+
+            const card = new CartCard(this.events, cardElement);
+
+            const cardRendered = card.render({
                 product: item,
                 index
             });
-            this.listElement.appendChild(cardElement);
+            this.listElement.appendChild(cardRendered);
         });
     }
 

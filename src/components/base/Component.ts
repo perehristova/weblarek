@@ -1,26 +1,26 @@
 /**
  * Базовый компонент
  */
-export abstract class Component<T> {
-    protected constructor(protected readonly container: HTMLElement) {
-        // Учитывайте что код в конструкторе исполняется ДО всех объявлений в дочернем классе
+export abstract class Component < T > {
+    protected constructor(protected readonly container: HTMLElement) {}
+
+    // Устанавливает текстовое содержимое элемента
+    protected setText(element: HTMLElement, value: string): void {
+        element.textContent = value;
     }
 
-    // Инструментарий для работы с DOM в дочерних компонентах
-
-    // Установить изображение с альтернативным текстом
-    protected setImage(element: HTMLImageElement, src: string, alt?: string) {
-        if (element) {
-            element.src = src;
-            if (alt) {
-                element.alt = alt;
-            }
-        }
+    // Переключает класс на элементе
+    protected toggleClass(element: HTMLElement, className: string, state: boolean = true): void {
+        element.classList.toggle(className, state);
     }
 
-    // Вернуть корневой DOM-элемент
-    render(data?: Partial<T>): HTMLElement {
-        Object.assign(this as object, data ?? {});
+    // Устанавливает состояние disabled
+    protected setDisabled(element: HTMLButtonElement | HTMLInputElement, state: boolean): void {
+        element.disabled = state;
+    }
+
+    // Базовый метод рендеринга
+    render(data ? : Partial < T > ): HTMLElement {
         return this.container;
     }
 }

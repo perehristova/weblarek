@@ -1,9 +1,12 @@
 import {
     Component
-} from './Component';
+} from '../base/Component';
 import {
     EventEmitter
 } from '../../base/Events';
+import {
+    IValidationErrors
+} from '../../../types';
 
 export abstract class Form < T > extends Component < T > {
     protected events: EventEmitter;
@@ -30,26 +33,20 @@ export abstract class Form < T > extends Component < T > {
     }
 
     protected abstract handleSubmit(): void;
-    protected abstract validate(): Record < string,
-    string > ;
 
-    protected updateSubmitButton(): void {
-        const errors = this.validate();
-        this.setDisabled(this.submitButton, Object.keys(errors).length > 0);
-    }
+    public setErrors(errors: Partial < IValidationErrors > ): void {
+        const errorText = Object.values(errors).filter(Boolean).join('; ');
+        this.setText(this.errorsElement, errorText);
 
-    protected showErrors(errors: Record < string, string > ): void {
-        const errorMessages = Object.values(errors).join(', ');
-        this.setText(this.errorsElement, errorMessages);
-    }
-
-    protected clearErrors(): void {
-        this.setText(this.errorsElement, '');
+        this.setDisabled(this.submitButton, errorText.length > 0);
     }
 
     protected resetForm(): void {
         this.formElement.reset();
-        this.clearErrors();
-        this.updateSubmitButton();
+        this.setErrors({});
+    }
+
+    render(data ? : T): HTMLElement {
+        return this.container;
     }
 }

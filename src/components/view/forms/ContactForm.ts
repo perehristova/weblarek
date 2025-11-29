@@ -5,19 +5,16 @@ import {
     IBuyer
 } from '../../../types';
 import {
-    cloneTemplate
-} from '../../../utils/utils';
-import {
     EventEmitter
 } from '../../base/Events';
 
-export class ContactForm extends Form < IBuyer > {
+// Тип T уменьшен до необходимого минимума
+export class ContactForm extends Form < Partial < Pick < IBuyer, 'email' | 'phone' >>> {
     private emailInput: HTMLInputElement;
     private phoneInput: HTMLInputElement;
 
-    constructor(events: EventEmitter) {
-        const template = document.getElementById('contacts') as HTMLTemplateElement;
-        super(events, cloneTemplate(template));
+    constructor(events: EventEmitter, container: HTMLElement) {
+        super(events, container);
 
         this.emailInput = this.container.querySelector('input[name="email"]') !;
         this.phoneInput = this.container.querySelector('input[name="phone"]') !;
@@ -25,78 +22,24 @@ export class ContactForm extends Form < IBuyer > {
         this.setupFieldListeners();
     }
 
-    render(data ? : IBuyer): HTMLElement {
-        this.resetForm();
-
-        if (data) {
-            if (data.email) {
-                this.emailInput.value = data.email;
-            }
-            if (data.phone) {
-                this.phoneInput.value = data.phone;
-            }
-        }
-
-        this.updateSubmitButton();
-        return this.container;
-    }
-
     private setupFieldListeners(): void {
         this.emailInput.addEventListener('input', () => {
-            this.handleFieldChange();
+            this.emitChange();
         });
 
         this.phoneInput.addEventListener('input', () => {
-            this.handleFieldChange();
+            this.emitChange();
         });
     }
 
-    private handleFieldChange(): void {
-        this.clearErrors();
-        this.updateSubmitButton();
+    private emitChange(): void {
+        const formData = this.getFormData();
+        this.events.emit('contact:change', formData);
     }
 
     protected handleSubmit(): void {
-        const errors = this.validate();
-
-        if (Object.keys(errors).length === 0) {
-            const formData = this.getFormData();
-            this.events.emit('contact:submit', formData);
-        } else {
-            this.showErrors(errors);
-        }
-    }
-
-    protected validate(): Record < string,
-    string > {
-        const errors: Record < string, string > = {};
-
-        const email = this.emailInput.value.trim();
-        const phone = this.phoneInput.value.trim();
-
-        if (!email) {
-            errors.email = 'Введите email';
-        } else if (!this.isValidEmail(email)) {
-            errors.email = 'Введите корректный email';
-        }
-
-        if (!phone) {
-            errors.phone = 'Введите телефон';
-        } else if (!this.isValidPhone(phone)) {
-            errors.phone = 'Введите корректный телефон';
-        }
-
-        return errors;
-    }
-
-    private isValidEmail(email: string): boolean {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    private isValidPhone(phone: string): boolean {
-        const phoneRegex = /^[\d\s\-\+\(\)]+$/;
-        return phoneRegex.test(phone) && phone.length >= 5;
+        const formData = this.getFormData();
+        this.events.emit('contact:submit', formData);
     }
 
     private getFormData(): Partial < IBuyer > {
@@ -104,5 +47,18 @@ export class ContactForm extends Form < IBuyer > {
             email: this.emailInput.value.trim(),
             phone: this.phoneInput.value.trim()
         };
+    }
+
+    render(data: Partial < Pick < IBuyer, 'email' | 'phone' >> ): HTMLElement {
+        super.render(data);
+
+        if (data.email) {
+            this.emailInput.value = data.email;
+        }
+        if (data.phone) {
+            this.phoneInput.value = data.phone;
+        }
+
+        return this.container;
     }
 }

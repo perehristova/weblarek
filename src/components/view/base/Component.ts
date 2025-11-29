@@ -5,10 +5,8 @@ export abstract class Component < T = any > {
         this.container = container;
     }
 
-    // Этот метод будет возвращать готовую разметку компонента
     abstract render(data ? : T): HTMLElement;
 
-    // Вспомогательные методы для работы с DOM
     protected setText(element: HTMLElement, text: string): void {
         if (element) {
             element.textContent = text;
@@ -18,6 +16,12 @@ export abstract class Component < T = any > {
     protected setDisabled(element: HTMLElement, disabled: boolean): void {
         if (element && 'disabled' in element) {
             (element as HTMLButtonElement).disabled = disabled;
+        }
+    }
+
+    protected toggleClass(element: HTMLElement, className: string, state: boolean = true): void {
+        if (element) {
+            element.classList.toggle(className, state);
         }
     }
 
