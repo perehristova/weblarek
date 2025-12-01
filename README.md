@@ -133,7 +133,7 @@ interface IProduct {
   price: number | null;
 }
 
-### Интерфейс покупателя (IBuyer)
+#### Интерфейс покупателя (IBuyer)
 
 type TPayment = 'card' | 'cash' | '';
 
@@ -144,7 +144,7 @@ interface IBuyer {
   address: string;
 }
 
-### Интерфейс ошибок валидации (IValidationErrors)
+#### Интерфейс ошибок валидации (IValidationErrors)
 
 interface IValidationErrors {
   payment?: string;
