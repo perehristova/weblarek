@@ -1,37 +1,35 @@
-import {
-    Component
-} from '../base/Component';
-import {
-    EventEmitter
-} from '../../base/Events';
+import { IEvents } from '../../base/Events';
 
 interface ISuccessModalData {
     total: number;
 }
 
-export class SuccessModal extends Component < ISuccessModalData > {
-    private events: EventEmitter;
-    private closeButton: HTMLButtonElement;
-    private descriptionElement: HTMLElement;
+export class SuccessModal {
+    protected container: HTMLElement;
+    protected events: IEvents;
+    protected closeButton: HTMLButtonElement;
+    protected descriptionElement: HTMLElement;
 
-    constructor(container: HTMLElement, events: EventEmitter) {
-        super(container);
+    constructor(container: HTMLElement, events: IEvents) {
+        this.container = container;
         this.events = events;
 
-        this.closeButton = this.container.querySelector('.order-success__close') !;
-        this.descriptionElement = this.container.querySelector('.order-success__description') !;
+        this.closeButton = this.container.querySelector('.order-success__close')!;
+        this.descriptionElement = this.container.querySelector('.order-success__description')!;
 
         this.closeButton.addEventListener('click', () => {
-            this.handleClose();
+            this.events.emit('success:close');
         });
     }
 
-    render(data: ISuccessModalData): HTMLElement {
-        this.setText(this.descriptionElement, `Списано ${data.total} синапсов`);
-        return this.container;
+    // СЕТТЕР для данных
+    set data(value: ISuccessModalData) {
+        this.descriptionElement.textContent = `Списано ${value.total} синапсов`;
     }
 
-    private handleClose(): void {
-        this.events.emit('success:close');
+    // МЕТОД для обратной совместимости
+    render(data: ISuccessModalData): HTMLElement {
+        this.data = data;
+        return this.container;
     }
 }

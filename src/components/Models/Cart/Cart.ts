@@ -1,34 +1,38 @@
-import {
-    IProduct
-} from '../../../types';
-import {
-    EventEmitter
-} from '../../base/Events';
+import { 
+    IProduct 
+} from '../../../types'; 
+import { 
+    IEvents 
+} from '../../base/Events'; 
 
 export class Cart {
     private items: IProduct[] = [];
-    private events: EventEmitter;
+    private events: IEvents;
 
-    constructor(events: EventEmitter) {
+    constructor(events: IEvents) {
         this.events = events;
+    }
+
+    getItems(): IProduct[] {
+        return this.items;
     }
 
     addItem(product: IProduct): void {
         this.items.push(product);
-        this.events.emit('cart:changed', this.getData());
+        this.events.emit('cart:changed');
     }
 
     removeItem(product: IProduct): void {
         const index = this.items.findIndex(item => item.id === product.id);
         if (index !== -1) {
             this.items.splice(index, 1);
-            this.events.emit('cart:changed', this.getData());
+            this.events.emit('cart:changed');
         }
     }
 
     clear(): void {
         this.items = [];
-        this.events.emit('cart:changed', this.getData());
+        this.events.emit('cart:changed');
     }
 
     getTotalPrice(): number {
@@ -43,19 +47,5 @@ export class Cart {
 
     contains(productId: string): boolean {
         return this.items.some(item => item.id === productId);
-    }
-
-    getItems(): IProduct[] {
-        return [...this.items];
-    }
-
-    getData(): {
-        items: IProduct[];total: number;count: number
-    } {
-        return {
-            items: [...this.items],
-            total: this.getTotalPrice(),
-            count: this.getTotalCount()
-        };
     }
 }

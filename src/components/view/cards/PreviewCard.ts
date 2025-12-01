@@ -1,68 +1,72 @@
-import {
-    Card
-} from '../base/Card';
-import {
-    IProduct
-} from '../../../types';
-import {
-    EventEmitter
-} from '../../base/Events';
+import { Card } from '../base/Card';
+import { IProduct } from '../../../types';
+import { IEvents } from '../../base/Events';
+import { CDN_URL } from '../../../utils/constants';
 
 export class PreviewCard extends Card {
-    private events: EventEmitter;
-    private button: HTMLButtonElement;
-    private descriptionElement: HTMLElement;
+    protected events: IEvents;
+    protected button: HTMLButtonElement;
+    protected descriptionElement: HTMLElement;
+    protected categoryElement: HTMLElement;
+    protected imageElement: HTMLImageElement;
+    protected _productId: string = '';
 
-    constructor(events: EventEmitter, container: HTMLElement) {
+    constructor(events: IEvents, container: HTMLElement) {
         super(container);
 
         this.events = events;
-        this.button = this.container.querySelector('.card__button') !;
-        this.descriptionElement = this.container.querySelector('.card__text') !;
+        this.button = this.container.querySelector('.card__button')!;
+        this.descriptionElement = this.container.querySelector('.card__text')!;
+        this.categoryElement = this.container.querySelector('.card__category')!;
+        this.imageElement = this.container.querySelector('.card__image')!;
 
+        this.setupEventListeners();
+    }
+
+    private setupEventListeners(): void {
         this.button.addEventListener('click', () => {
-            this.handleButtonClick();
+            this.events.emit('preview:button-click', { id: this._productId });
         });
     }
 
-    render(product: IProduct, inCart: boolean = false): HTMLElement {
-        this.container.dataset.id = product.id;
-
-        this.setText(this.titleElement, product.title);
-        this.setText(this.priceElement, product.price ? `${product.price} синапсов` : 'Бесценно');
-        this.setCategory(product.category);
-        this.setImageWithCDN(product.image, product.title);
-        this.setText(this.descriptionElement, product.description);
-
-        if (!product.price) {
-            this.setText(this.button, 'Недоступно');
-            this.setDisabled(this.button, true);
-        } else if (inCart) {
-            this.setText(this.button, 'Удалить из корзины');
-            this.setDisabled(this.button, false);
-        } else {
-            this.setText(this.button, 'Купить');
-            this.setDisabled(this.button, false);
-        }
-
-        return this.container;
+    // СЕТТЕР для товара
+    set product(value: IProduct) {
+        this._productId = value.id;
+        this.setTitle(value.title);
+        this.setPrice(value.price);
+        this.setDescription(value.description);
+        this.setCategory(value.category);
+        this.setImage(value.image, value.title);
     }
 
-    private handleButtonClick(): void {
-        const id = this.container.dataset.id;
-        if (!id) return;
+    // СЕТТЕР для текста кнопки (принимает готовый текст из презентера)
+    set buttonText(value: string) {
+        this.button.textContent = value;
+    }
 
-        const buttonText = this.button.textContent;
-        if (buttonText === 'Удалить из корзины') {
-            this.events.emit('card:remove', {
-                id,
-                fromModal: true
-            });
-        } else {
-            this.events.emit('card:add', {
-                id,
-                fromModal: true
-            });
-        }
+    // СЕТТЕР для состояния кнопки (принимает готовое состояние из презентера)
+    set buttonDisabled(value: boolean) {
+        this.button.disabled = value;
+    }
+
+    // Приватные методы для специфичных элементов
+    private setDescription(description: string): void {
+        this.descriptionElement.textContent = description;
+    }
+
+    private setCategory(category: string): void {
+        this.categoryElement.textContent = category;
+    }
+
+    private setImage(src: string, alt: string): void {
+        this.imageElement.src = `${CDN_URL}${src}`;
+        this.imageElement.alt = alt;
+    }
+
+    render(product: IProduct, buttonText: string, buttonDisabled: boolean): HTMLElement {
+        this.product = product;
+        this.buttonText = buttonText;
+        this.buttonDisabled = buttonDisabled;
+        return this.container;
     }
 }

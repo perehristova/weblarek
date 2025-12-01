@@ -1,69 +1,56 @@
-import {
-    Card
-} from '../base/Card';
-import {
-    IProduct
-} from '../../../types';
-import {
-    EventEmitter
-} from '../../base/Events';
+import { Card } from '../base/Card';
+import { IProduct } from '../../../types';
+import { IEvents } from '../../base/Events';
+import { CDN_URL } from '../../../utils/constants';
 
 export class CatalogCard extends Card {
-    private events: EventEmitter;
-    private button: HTMLButtonElement;
+    protected events: IEvents;
+    protected button: HTMLButtonElement;
+    protected categoryElement: HTMLElement;
+    protected imageElement: HTMLImageElement;
 
-    constructor(events: EventEmitter, container: HTMLElement) {
+    constructor(events: IEvents, container: HTMLElement) {
         super(container);
 
         this.events = events;
-
         this.button = this.container.querySelector('.card__button') as HTMLButtonElement;
-
-        if (this.button) {
-            this.button.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.handleCardAdd();
-            });
-        }
-
-        this.container.addEventListener('click', () => {
-            this.handleCardSelect();
-        });
+        this.categoryElement = this.container.querySelector('.card__category')!;
+        this.imageElement = this.container.querySelector('.card__image')!;
     }
 
-    /**
-     * Обработчик клика по всей карточке для открытия превью.
-     */
-    private handleCardSelect(): void {
-        const id = this.container.dataset.id;
-        if (id) {
-            this.events.emit('card:select', {
-                id
-            });
-        }
+    set product(value: IProduct) {
+        this.setTitle(value.title);
+        this.setPrice(value.price);
+        this.setCategory(value.category);
+        this.setImage(value.image, value.title);
     }
 
-    /**
-     * Обработчик клика по кнопке "Купить" для добавления в корзину.
-     */
-    private handleCardAdd(): void {
-        const id = this.container.dataset.id;
-        if (id) {
-            this.events.emit('card:add', {
-                id,
-                fromModal: false
-            });
-        }
+    private setCategory(category: string): void {
+        this.categoryElement.textContent = category;
+    }
+
+    private setImage(src: string, alt: string): void {
+        this.imageElement.src = `${CDN_URL}${src}`;
+        this.imageElement.alt = alt;
     }
 
     render(product: IProduct): HTMLElement {
-        this.container.dataset.id = product.id;
+        this.product = product;
+        
+        if (this.button) {
+            this.button.onclick = (e) => {
+                e.stopPropagation();
+                this.events.emit('card:add', { 
+                    id: product.id,
+                    fromModal: false 
+                });
+            };
+        }
 
-        this.setText(this.titleElement, product.title);
-        this.setText(this.priceElement, product.price ? `${product.price} синапсов` : 'Бесценно');
-        this.setCategory(product.category);
-        this.setImageWithCDN(product.image, product.title);
-
+        this.container.onclick = () => {
+            this.events.emit('card:select', { id: product.id });
+        };
+        
         return this.container;
     }
 }

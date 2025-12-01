@@ -1,42 +1,19 @@
-// CatalogView.ts
+export class CatalogView {
+    protected container: HTMLElement;
 
-import {
-    Component
-} from '../base/Component';
-import {
-    IProduct
-} from '../../../types';
-import {
-    CatalogCard
-} from '../cards/CatalogCard';
-import {
-    EventEmitter
-} from '../../base/Events';
-import {
-    cloneTemplate
-} from '../../../utils/utils';
-
-export class CatalogView extends Component < IProduct[] > {
-    private events: EventEmitter;
-    private templateSelector = '#card-catalog';
-
-    constructor(container: HTMLElement, events: EventEmitter) {
-        super(container);
-        this.events = events;
+    constructor(container: HTMLElement) {
+        this.container = container;
     }
 
-    render(products: IProduct[]): HTMLElement {
-        this.container.innerHTML = '';
+    // Сеттер принимает ГОТОВЫЙ массив DOM-элементов
+    set items(items: HTMLElement[]) {
+        // Очищаем и вставляем новые элементы
+        this.container.replaceChildren(...items);
+    }
 
-        products.forEach(product => {
-            const cardElement = cloneTemplate < HTMLElement > (this.templateSelector);
-
-            const card = new CatalogCard(this.events, cardElement);
-
-            const cardRendered = card.render(product);
-            this.container.appendChild(cardRendered);
-        });
-
+    // Рендер, который просто вызывает сеттер
+    render(items: HTMLElement[]): HTMLElement {
+        this.items = items;
         return this.container;
     }
 }

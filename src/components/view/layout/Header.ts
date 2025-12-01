@@ -1,38 +1,15 @@
-import {
-    Component
-} from '../base/Component';
-import {
-    EventEmitter
-} from '../../base/Events';
-
-export class Header extends Component < number > {
-    private events: EventEmitter;
-    protected basketButton: HTMLButtonElement;
+export class Header {
+    protected container: HTMLElement;
     protected counterElement: HTMLElement;
 
-    constructor(container: HTMLElement, events: EventEmitter) {
-        super(container);
-        this.events = events;
+    constructor(container: HTMLElement) {
+        this.container = container;
 
-        this.basketButton = this.container.querySelector('.header__basket') !;
-        this.counterElement = this.container.querySelector('.header__basket-counter') !;
-
-        this.basketButton.addEventListener('click', () => {
-            this.handleBasketClick();
-        });
+        this.counterElement = this.container.querySelector('.header__basket-counter')!;
     }
 
-    public setLocked(isLocked: boolean): void {
-        const body = document.body;
-        body.classList.toggle('locked', isLocked);
-    }
-
-    render(cartItemsCount: number): HTMLElement {
-        this.setText(this.counterElement, cartItemsCount.toString());
-        return this.container;
-    }
-
-    private handleBasketClick(): void {
-        this.events.emit('basket:open');
+    // СЕТТЕР для счётчика корзины
+    set counter(value: number) {
+        this.counterElement.textContent = value.toString();
     }
 }

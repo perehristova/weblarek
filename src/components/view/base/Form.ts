@@ -1,52 +1,44 @@
-import {
-    Component
-} from '../base/Component';
-import {
-    EventEmitter
+import { 
+    IEvents 
 } from '../../base/Events';
-import {
-    IValidationErrors
-} from '../../../types';
+import { 
+    IValidationErrors 
+} from '../../../types'; 
 
-export abstract class Form < T > extends Component < T > {
-    protected events: EventEmitter;
-    protected formElement: HTMLFormElement;
-    protected submitButton: HTMLButtonElement;
-    protected errorsElement: HTMLElement;
+export abstract class Form<T> {
+    protected container: HTMLElement;
+    protected events: IEvents;
+    protected formElement: HTMLFormElement; 
+    protected submitButton: HTMLButtonElement; 
+    protected errorsElement: HTMLElement; 
 
-    constructor(events: EventEmitter, container: HTMLElement) {
-        super(container);
+    constructor(events: IEvents, container: HTMLElement) {
+        this.container = container;
+        this.events = events; 
+        this.formElement = this.container as HTMLFormElement; 
+        this.submitButton = this.container.querySelector('button[type="submit"]')!; 
+        this.errorsElement = this.container.querySelector('.form__errors')!; 
 
-        this.events = events;
-        this.formElement = this.container as HTMLFormElement;
-        this.submitButton = this.container.querySelector('button[type="submit"]') !;
-        this.errorsElement = this.container.querySelector('.form__errors') !;
+        this.setupEventListeners(); 
+    } 
 
-        this.setupEventListeners();
-    }
+    protected setupEventListeners(): void { 
+        this.formElement.addEventListener('submit', (event) => { 
+            event.preventDefault(); 
+            this.handleSubmit(); 
+        }); 
+    } 
 
-    protected setupEventListeners(): void {
-        this.formElement.addEventListener('submit', (event) => {
-            event.preventDefault();
-            this.handleSubmit();
-        });
-    }
+    protected abstract handleSubmit(): void; 
 
-    protected abstract handleSubmit(): void;
+    public setErrors(errors: Partial<IValidationErrors>): void { 
+        const errorText = Object.values(errors).filter(Boolean).join('; '); 
+        
+        this.errorsElement.textContent = errorText; 
+        this.submitButton.disabled = errorText.length > 0; 
+    } 
 
-    public setErrors(errors: Partial < IValidationErrors > ): void {
-        const errorText = Object.values(errors).filter(Boolean).join('; ');
-        this.setText(this.errorsElement, errorText);
-
-        this.setDisabled(this.submitButton, errorText.length > 0);
-    }
-
-    protected resetForm(): void {
-        this.formElement.reset();
-        this.setErrors({});
-    }
-
-    render(data ? : T): HTMLElement {
-        return this.container;
-    }
+    render(data?: T): HTMLElement { 
+        return this.container; 
+    } 
 }

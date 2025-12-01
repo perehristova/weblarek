@@ -1,55 +1,33 @@
-import {
-    Component
-} from '../base/Component';
-import {
-    IProduct
-} from '../../../types';
-import {
-    EventEmitter
-} from '../../base/Events';
+import { Card } from '../base/Card';
+import { IProduct } from '../../../types';
+import { IEvents } from '../../base/Events';
 
-export class CartCard extends Component < {
-    product: IProduct;index: number
-} > {
-    private events: EventEmitter;
-    private deleteButton: HTMLButtonElement;
-    private indexElement: HTMLElement;
-    private titleElement: HTMLElement;
-    private priceElement: HTMLElement;
+export class CartCard extends Card {
+    protected deleteButton: HTMLButtonElement;
+    protected indexElement: HTMLElement;
 
-    constructor(events: EventEmitter, container: HTMLElement) {
+    constructor(protected events: IEvents, container: HTMLElement) {
         super(container);
-
-        this.events = events;
-        this.deleteButton = this.container.querySelector('.basket__item-delete') !;
-        this.indexElement = this.container.querySelector('.basket__item-index') !;
-        this.titleElement = this.container.querySelector('.card__title') !;
-        this.priceElement = this.container.querySelector('.card__price') !;
-
-        this.deleteButton.addEventListener('click', (event) => {
-            event.stopPropagation();
-            this.handleDelete();
-        });
+        this.deleteButton = this.container.querySelector('.basket__item-delete')!;
+        this.indexElement = this.container.querySelector('.basket__item-index')!;
     }
 
-    render(data: {
-        product: IProduct;index: number
-    }): HTMLElement {
-        this.container.dataset.id = data.product.id;
+    set index(value: number) {
+        this.indexElement.textContent = String(value + 1);
+    }
 
-        this.setText(this.titleElement, data.product.title);
-        this.setText(this.priceElement, data.product.price ? `${data.product.price} синапсов` : 'Бесценно');
-        this.setText(this.indexElement, (data.index + 1).toString());
+    set product(value: IProduct) {
+        this.setTitle(value.title);
+        this.setPrice(value.price);
+    }
 
+    render(data: { product: IProduct; index: number }): HTMLElement {
+        this.product = data.product;
+        this.index = data.index;
+        this.deleteButton.onclick = () => {
+            this.events.emit('card:remove', { id: data.product.id });
+        };
+        
         return this.container;
-    }
-
-    private handleDelete(): void {
-        const id = this.container.dataset.id;
-        if (id) {
-            this.events.emit('card:remove', {
-                id
-            });
-        }
     }
 }

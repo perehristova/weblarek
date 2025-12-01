@@ -6,78 +6,53 @@ import {
     TPayment
 } from '../../../types';
 import {
-    EventEmitter
+    IEvents
 } from '../../base/Events';
 
-// Тип T уменьшен до необходимого минимума
-export class PaymentForm extends Form < Partial < Pick < IBuyer, 'payment' | 'address' >>> {
-    private paymentButtons: NodeListOf < HTMLButtonElement > ;
+export class PaymentForm extends Form<Partial<Pick<IBuyer, 'payment' | 'address'>>> {
+    private paymentButtons: NodeListOf<HTMLButtonElement>;
     private addressInput: HTMLInputElement;
 
-    constructor(events: EventEmitter, container: HTMLElement) {
+    constructor(events: IEvents, container: HTMLElement) {
         super(events, container);
-
         this.paymentButtons = this.container.querySelectorAll('button[name]');
-        this.addressInput = this.container.querySelector('input[name="address"]') !;
-
+        this.addressInput = this.container.querySelector('input[name="address"]')!;
         this.setupPaymentListeners();
-    }
-
-    private getSelectedPayment(): TPayment {
-        const activeCard = this.container.querySelector('.button[name="card"].button_alt-active');
-        const activeCash = this.container.querySelector('.button[name="cash"].button_alt-active');
-        if (activeCard) return 'card';
-        if (activeCash) return 'cash';
-        return '';
-    }
-
-    private setPayment(payment: TPayment): void {
-        this.paymentButtons.forEach(button => {
-            const isActive = button.name === payment;
-            button.classList.toggle('button_alt-active', isActive);
-        });
     }
 
     private setupPaymentListeners(): void {
         this.paymentButtons.forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.setPayment(button.name as TPayment);
-                this.emitChange();
+                this.events.emit('payment:method:click', { 
+                    method: button.name as TPayment 
+                });
             });
         });
 
         this.addressInput.addEventListener('input', () => {
-            this.emitChange();
+            this.events.emit('payment:address:input', { 
+                address: this.addressInput.value.trim() 
+            });
         });
     }
 
-    private emitChange(): void {
-        const formData = this.getFormData();
-        this.events.emit('payment:change', formData);
-    }
-
     protected handleSubmit(): void {
-        const formData = this.getFormData();
-        this.events.emit('payment:submit', formData);
+        this.events.emit('payment:form:submit');
     }
 
-    private getFormData(): Partial < IBuyer > {
-        return {
-            payment: this.getSelectedPayment(),
-            address: this.addressInput.value.trim()
-        };
-    }
-
-    render(data: Partial < Pick < IBuyer, 'payment' | 'address' >> ): HTMLElement {
-        super.render(data);
-
-        if (data.address) {
-            this.addressInput.value = data.address;
+    render(data: Partial<Pick<IBuyer, 'payment' | 'address'>>): HTMLElement {
+        this.paymentButtons.forEach(btn => btn.classList.remove('button_alt-active'));
+        
+        if (data.payment) {
+            const activeButton = Array.from(this.paymentButtons)
+                .find(btn => btn.name === data.payment);
+            if (activeButton) activeButton.classList.add('button_alt-active');
         }
-
-        this.setPayment(data.payment || '');
-
+        
+        this.addressInput.value = data.address || '';
+        this.submitButton.disabled = !data.payment;
+        
         return this.container;
     }
 }

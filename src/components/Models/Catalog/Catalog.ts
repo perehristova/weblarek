@@ -1,16 +1,12 @@
-import {
-    IProduct
-} from '../../../types';
-import {
-    EventEmitter
-} from '../../base/Events';
+import { IProduct } from '../../../types';
+import { IEvents } from '../../base/Events';
 
 export class Catalog {
     private products: IProduct[] = [];
     private selectedProduct: IProduct | null = null;
-    private events: EventEmitter;
+    private events: IEvents;
 
-    constructor(events: EventEmitter) {
+    constructor(events: IEvents) {
         this.events = events;
     }
 
@@ -29,19 +25,9 @@ export class Catalog {
 
     setSelectedProduct(product: IProduct): void {
         this.selectedProduct = product;
-        this.events.emit('catalog:productSelected', product);
     }
 
     getSelectedProduct(): IProduct | null {
         return this.selectedProduct;
-    }
-
-    getData(): {
-        products: IProduct[];selected: IProduct | null
-    } {
-        return {
-            products: [...this.products],
-            selected: this.selectedProduct
-        };
     }
 }
