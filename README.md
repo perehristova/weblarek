@@ -181,52 +181,52 @@ export interface IApi {
 
 Управляет каталогом товаров.
 
-Конструктор: constructor(events: IEvents)
+Конструктор: `constructor(events: IEvents)`
 
 Поля класса:
-private products: IProduct[] - массив товаров каталога
-private selectedProduct: IProduct | null - выбранный для просмотра товар
+`private products: IProduct[]` - массив товаров каталога
+`private selectedProduct: IProduct | null` - выбранный для просмотра товар
 
 Методы:
-setProducts(products: IProduct[]): void - сохраняет массив товаров (генерирует событие catalog:changed)
-getProducts(): IProduct[] - возвращает массив всех товаров
-getProductById(id: string): IProduct | undefined - возвращает товар по ID
-setSelectedProduct(product: IProduct): void - сохраняет товар для детального просмотра
-getSelectedProduct(): IProduct | null - возвращает выбранный товар
+`setProducts(products: IProduct[]): void` - сохраняет массив товаров (генерирует событие catalog:changed)
+`getProducts(): IProduct[]` - возвращает массив всех товаров
+`getProductById(id: string): IProduct | undefined` - возвращает товар по ID
+`setSelectedProduct(product: IProduct): void` - сохраняет товар для детального просмотра
+`getSelectedProduct(): IProduct | null` - возвращает выбранный товар
 
 ### Класс (Cart)
 
 Управляет корзиной покупок.
 
-Конструктор: constructor(events: IEvents)
+Конструктор: `constructor(events: IEvents)`
 
 Поля класса:
-private items: IProduct[] - массив товаров в корзине
+`private items: IProduct[]` - массив товаров в корзине
 
 Методы:
-addItem(product: IProduct): void - добавляет товар в корзину (генерирует событие cart:changed)
-removeItem(product: IProduct): void - удаляет товар из корзины (генерирует событие cart:changed)
-clear(): void - очищает корзину (генерирует событие cart:changed)
-getItems(): IProduct[] - возвращает все товары корзины
-getTotalPrice(): number - возвращает общую стоимость
-getTotalCount(): number - возвращает количество товаров
-contains(productId: string): boolean - проверяет наличие товара
+`addItem(product: IProduct): void` - добавляет товар в корзину (генерирует событие cart:changed)
+`removeItem(product: IProduct): void` - удаляет товар из корзины (генерирует событие cart:changed)
+`clear(): void` - очищает корзину (генерирует событие cart:changed)
+`getItems(): IProduct[]` - возвращает все товары корзины
+`getTotalPrice(): number` - возвращает общую стоимость
+`getTotalCount(): number` - возвращает количество товаров
+`contains(productId: string): boolean` - проверяет наличие товара
 
 ### Класс (Buyer)
 
 Управляет данными покупателя.
 
-Конструктор: constructor(events: IEvents)
+Конструктор: `constructor(events: IEvents)`
 
 Поля класса:
-private data: IBuyer - данные покупателя
+`private data: IBuyer` - данные покупателя
 
 Методы:
-setData(data: Partial<IBuyer>): void - сохраняет данные (генерирует событие buyer:changed)
-getData(): IBuyer - возвращает все данные
-clear(): void - очищает данные (генерирует событие buyer:changed)
-validate(): IValidationErrors - валидирует данные, возвращает ошибки
-isValid(): boolean - проверяет валидность всех данных
+`setData(data: Partial<IBuyer>): void` - сохраняет данные (генерирует событие buyer:changed)
+`getData(): IBuyer` - возвращает все данные
+`clear(): void` - очищает данные (генерирует событие buyer:changed)
+`validate(): IValidationErrors` - валидирует данные, возвращает ошибки
+`isValid(): boolean` - проверяет валидность всех данных
 
 ## Слой коммуникации
 
@@ -234,11 +234,11 @@ isValid(): boolean - проверяет валидность всех данны
 
 Обеспечивает взаимодействие с сервером.
 
-Конструктор: constructor(api: IApi)
+Конструктор: `constructor(api: IApi)`
 
 Методы:
-getProductList(): Promise<IProduct[]> - получает список товаров с сервера
-createOrder(order: IOrderRequest): Promise<IOrderResult> - отправляет заказ на сервер
+`getProductList(): Promise<IProduct[]>` - получает список товаров с сервера
+`createOrder(order: IOrderRequest): Promise<IOrderResult>` - отправляет заказ на сервер
 
 ## Компоненты представления
 
@@ -246,38 +246,38 @@ createOrder(order: IOrderRequest): Promise<IOrderResult> - отправляет 
 
 #### Класс (Card)
 
-Базовый класс для карточек товаров. Находится в src/components/view/base/Card.ts.
+Базовый класс для карточек товаров. Находится в `src/components/view/base/Card.ts`.
 
-Конструктор: constructor(container: HTMLElement)
+Конструктор: `constructor(container: HTMLElement)`
 
 Поля класса:
-protected container: HTMLElement - корневой элемент
-protected titleElement: HTMLElement - элемент названия
-protected priceElement: HTMLElement - элемент цены
+`protected container: HTMLElement` - корневой элемент
+`protected titleElement: HTMLElement` - элемент названия
+`protected priceElement: HTMLElement` - элемент цены
 
 Методы:
-protected setTitle(title: string): void - устанавливает название
-protected setPrice(price: number | null): void - устанавливает цену
-protected setDisabled(element: HTMLElement, disabled: boolean): void - устанавливает disabled
+`protected setTitle(title: string): void` - устанавливает название
+`protected setPrice(price: number | null): void` - устанавливает цену
+`protected setDisabled(element: HTMLElement, disabled: boolean): void` - устанавливает disabled
 
 #### Класс (Form)
 
-Базовый класс для форм. Находится в src/components/view/base/Form.ts.
+Базовый класс для форм. Находится в `src/components/view/base/Form.ts`.
 
-Конструктор: constructor(events: IEvents, container: HTMLElement)
+Конструктор: `constructor(events: IEvents, container: HTMLElement)`
 
 Поля класса:
-protected container: HTMLElement - корневой элемент формы
-protected events: IEvents - брокер событий
-protected formElement: HTMLFormElement - элемент формы
-protected submitButton: HTMLButtonElement - кнопка отправки
-protected errorsElement: HTMLElement - элемент для ошибок
+`protected container: HTMLElement` - корневой элемент формы
+`protected events: IEvents` - брокер событий
+`protected formElement: HTMLFormElement` - элемент формы
+`protected submitButton: HTMLButtonElement` - кнопка отправки
+`protected errorsElement: HTMLElement` - элемент для ошибок
 
 Методы:
-protected abstract handleSubmit(): void - абстрактный метод обработки отправки
-protected setupEventListeners(): void - настройка слушателей событий
-setErrors(errors: Partial<IValidationErrors>): void - установка ошибок валидации
-render(data?: T): HTMLElement - отображение данных формы
+`protected abstract handleSubmit(): void` - абстрактный метод обработки отправки
+`protected setupEventListeners(): void` - настройка слушателей событий
+`setErrors(errors: Partial<IValidationErrors>): void` - установка ошибок валидации
+`render(data?: T): HTMLElement` - отображение данных формы
 
 ### Карточки товаров
 
@@ -285,37 +285,37 @@ render(data?: T): HTMLElement - отображение данных формы
 
 Карточка товара в каталоге. Наследуется от Card.
 
-Конструктор: constructor(events: IEvents, container: HTMLElement)
+Конструктор: `constructor(events: IEvents, container: HTMLElement)`
 
 Методы:
-set product(value: IProduct) - сеттер для данных товара
-render(product: IProduct): HTMLElement - отображение карточки
-Генерирует события: card:select, card:add
+`set product(value: IProduct)` - сеттер для данных товара
+`render(product: IProduct): HTMLElement` - отображение карточки
+Генерирует события: `card:select, card:add`
 
 #### Класс (PreviewCard)
 
 Карточка товара в модальном окне. Наследуется от Card.
 
-Конструктор: constructor(events: IEvents, container: HTMLElement)
+Конструктор: `constructor(events: IEvents, container: HTMLElement)`
 
 Методы:
-set product(value: IProduct) - сеттер для данных товара
-set buttonText(value: string) - сеттер для текста кнопки
-set buttonDisabled(value: boolean) - сеттер для состояния кнопки
-render(product: IProduct, buttonText: string, buttonDisabled: boolean): HTMLElement - отображение
-Генерирует событие: preview:button-click
+`set product(value: IProduct)` - сеттер для данных товара
+`set buttonText(value: string)` - сеттер для текста кнопки
+`set buttonDisabled(value: boolean)` - сеттер для состояния кнопки
+`render(product: IProduct, buttonText: string, buttonDisabled: boolean): HTMLElement` - отображение
+Генерирует событие: `preview:button-click`
 
 #### Класс (CartCard)
 
 Карточка товара в корзине. Наследуется от Card.
 
-Конструктор: constructor(events: IEvents, container: HTMLElement)
+Конструктор: `constructor(events: IEvents, container: HTMLElement)`
 
 Методы:
-set product(value: IProduct) - сеттер для данных товара
-set index(value: number) - сеттер для индекса
-render(data: { product: IProduct; index: number }): HTMLElement - отображение
-Генерирует событие: card:remove
+`set product(value: IProduct)` - сеттер для данных товара
+`set index(value: number)` - сеттер для индекса
+`render(data: { product: IProduct; index: number }): HTMLElement` - отображение
+Генерирует событие: `card:remove`
 
 ### Формы
 
@@ -323,21 +323,21 @@ render(data: { product: IProduct; index: number }): HTMLElement - отображ
 
 Форма оплаты и адреса доставки. Наследуется от Form.
 
-Конструктор: constructor(events: IEvents, container: HTMLElement)
+Конструктор: `constructor(events: IEvents, container: HTMLElement)`
 
 Методы:
-render(data: Partial<Pick<IBuyer, 'payment' | 'address'>>): HTMLElement - отображение
-Генерирует события: payment:method:click, payment:address:input, payment:form:submit
+`render(data: Partial<Pick<IBuyer, 'payment' | 'address'>>): HTMLElement` - отображение
+Генерирует события: `payment:method:click, payment:address:input, payment:form:submit`
 
 #### Класс (ContactForm)
 
 Форма контактов покупателя. Наследуется от Form.
 
-Конструктор: constructor(events: IEvents, container: HTMLElement)
+Конструктор: `constructor(events: IEvents, container: HTMLElement)`
 
 Методы:
-render(data: Partial<Pick<IBuyer, 'email' | 'phone'>>): HTMLElement - отображение
-Генерирует события: contact:email:input, contact:phone:input, contact:form:submit
+`render(data: Partial<Pick<IBuyer, 'email' | 'phone'>>): HTMLElement` - отображение
+Генерирует события: `contact:email:input, contact:phone:input, contact:form:submit`
 
 ### Компоновщики
 
@@ -345,31 +345,31 @@ render(data: Partial<Pick<IBuyer, 'email' | 'phone'>>): HTMLElement - отобр
 
 Отображение каталога товаров.
 
-Конструктор: constructor(container: HTMLElement)
+Конструктор: `constructor(container: HTMLElement)`
 
 Методы:
-set items(items: HTMLElement[]) - сеттер для элементов карточек
-render(items: HTMLElement[]): HTMLElement - отображение каталога
+`set items(items: HTMLElement[])` - сеттер для элементов карточек
+`render(items: HTMLElement[]): HTMLElement` - отображение каталога
 
 #### Класс (CartView)
 
 Отображение корзины покупок.
 
-Конструктор: constructor(events: IEvents, container: HTMLElement)
+Конструктор: `constructor(events: IEvents, container: HTMLElement)`
 
 Методы:
-set items(items: HTMLElement[]) - сеттер для элементов карточек
-set total(total: number) - сеттер для общей суммы
-Генерирует событие: cart:checkout
+`set items(items: HTMLElement[])` - сеттер для элементов карточек
+`set total(total: number)` - сеттер для общей суммы
+Генерирует событие: `cart:checkout`
 
 #### Класс (Header)
 
 Шапка сайта с счетчиком корзины.
 
-Конструктор: constructor(container: HTMLElement)
+Конструктор: `constructor(container: HTMLElement)`
 
 Методы:
-set counter(value: number) - сеттер для счетчика корзины
+`set counter(value: number)` - сеттер для счетчика корзины
 
 ### Модальные окна
 
@@ -377,28 +377,28 @@ set counter(value: number) - сеттер для счетчика корзины
 
 Базовое модальное окно.
 
-Конструктор: constructor(container: HTMLElement, events: IEvents)
+Конструктор: `constructor(container: HTMLElement, events: IEvents)`
 
 Методы:
-open(content?: HTMLElement): void - открытие окна
-close(): void - закрытие окна
-setContent(content: HTMLElement): void - установка содержимого
-isOpen(): boolean - проверка открыто ли окно
+`open(content?: HTMLElement): void` - открытие окна
+`close(): void` - закрытие окна
+`setContent(content: HTMLElement): void` - установка содержимого
+`isOpen(): boolean` - проверка открыто ли окно
 
 #### Класс (SuccessModal)
 
 Модальное окно успешного оформления заказа.
 
-Конструктор: constructor(container: HTMLElement, events: IEvents)
+Конструктор: `constructor(container: HTMLElement, events: IEvents)`
 
 Методы:
-set data(value: { total: number }) - сеттер для данных
-render(data: { total: number }): HTMLElement - отображение
-Генерирует событие: success:close
+`set data(value: { total: number })` - сеттер для данных
+`render(data: { total: number }): HTMLElement` - отображение
+Генерирует событие: `success:close`
 
 ### Презентер
 
-Презентер находится в файле src/main.ts и содержит всю бизнес-логику приложения:
+Презентер находится в файле `src/main.ts` и содержит всю бизнес-логику приложения:
 
 1. Инициализацию всех компонентов
 
@@ -410,19 +410,19 @@ render(data: { total: number }): HTMLElement - отображение
 
 Основные обрабатываемые события:
 
-* catalog:changed - обновление каталога
+* `catalog:changed` - обновление каталога
 
-* cart:changed - изменение корзины
+* `cart:changed` - изменение корзины
 
-* buyer:changed - изменение данных покупателя
+* `buyer:changed` - изменение данных покупателя
 
-* card:select, card:add, card:remove - действия с товарами
+* `card:select, card:add, card:remove` - действия с товарами
 
-* basket:open, cart:checkout - работа с корзиной
+* `basket:open, cart:checkout` - работа с корзиной
 
-* payment:*, contact:* - работа с формами
+* `payment:*, contact:*` - работа с формами
 
-* success:close - завершение заказа
+* `success:close` - завершение заказа
 
 ### Событийная модель
 
