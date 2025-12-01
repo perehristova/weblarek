@@ -1,7 +1,15 @@
-import { Card } from '../base/Card';
-import { IProduct } from '../../../types';
-import { IEvents } from '../../base/Events';
-import { CDN_URL } from '../../../utils/constants';
+import {
+    Card
+} from '../base/Card';
+import {
+    IProduct
+} from '../../../types';
+import {
+    IEvents
+} from '../../base/Events';
+import {
+    CDN_URL
+} from '../../../utils/constants';
 
 export class PreviewCard extends Card {
     protected events: IEvents;
@@ -15,21 +23,22 @@ export class PreviewCard extends Card {
         super(container);
 
         this.events = events;
-        this.button = this.container.querySelector('.card__button')!;
-        this.descriptionElement = this.container.querySelector('.card__text')!;
-        this.categoryElement = this.container.querySelector('.card__category')!;
-        this.imageElement = this.container.querySelector('.card__image')!;
+        this.button = this.container.querySelector('.card__button') !;
+        this.descriptionElement = this.container.querySelector('.card__text') !;
+        this.categoryElement = this.container.querySelector('.card__category') !;
+        this.imageElement = this.container.querySelector('.card__image') !;
 
         this.setupEventListeners();
     }
 
     private setupEventListeners(): void {
         this.button.addEventListener('click', () => {
-            this.events.emit('preview:button-click', { id: this._productId });
+            this.events.emit('preview:button-click', {
+                id: this._productId
+            });
         });
     }
 
-    // СЕТТЕР для товара
     set product(value: IProduct) {
         this._productId = value.id;
         this.setTitle(value.title);
@@ -39,17 +48,14 @@ export class PreviewCard extends Card {
         this.setImage(value.image, value.title);
     }
 
-    // СЕТТЕР для текста кнопки (принимает готовый текст из презентера)
     set buttonText(value: string) {
         this.button.textContent = value;
     }
 
-    // СЕТТЕР для состояния кнопки (принимает готовое состояние из презентера)
     set buttonDisabled(value: boolean) {
         this.button.disabled = value;
     }
 
-    // Приватные методы для специфичных элементов
     private setDescription(description: string): void {
         this.descriptionElement.textContent = description;
     }

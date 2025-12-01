@@ -1,6 +1,12 @@
-import { Card } from '../base/Card';
-import { IProduct } from '../../../types';
-import { IEvents } from '../../base/Events';
+import {
+    Card
+} from '../base/Card';
+import {
+    IProduct
+} from '../../../types';
+import {
+    IEvents
+} from '../../base/Events';
 
 export class CartCard extends Card {
     protected deleteButton: HTMLButtonElement;
@@ -8,8 +14,8 @@ export class CartCard extends Card {
 
     constructor(protected events: IEvents, container: HTMLElement) {
         super(container);
-        this.deleteButton = this.container.querySelector('.basket__item-delete')!;
-        this.indexElement = this.container.querySelector('.basket__item-index')!;
+        this.deleteButton = this.container.querySelector('.basket__item-delete') !;
+        this.indexElement = this.container.querySelector('.basket__item-index') !;
     }
 
     set index(value: number) {
@@ -21,13 +27,17 @@ export class CartCard extends Card {
         this.setPrice(value.price);
     }
 
-    render(data: { product: IProduct; index: number }): HTMLElement {
+    render(data: {
+        product: IProduct;index: number
+    }): HTMLElement {
         this.product = data.product;
         this.index = data.index;
         this.deleteButton.onclick = () => {
-            this.events.emit('card:remove', { id: data.product.id });
+            this.events.emit('card:remove', {
+                id: data.product.id
+            });
         };
-        
+
         return this.container;
     }
 }

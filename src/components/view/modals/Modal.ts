@@ -1,4 +1,6 @@
-import { IEvents } from '../../base/Events';
+import {
+    IEvents
+} from '../../base/Events';
 
 export class Modal {
     protected container: HTMLElement;
@@ -11,8 +13,8 @@ export class Modal {
         this.container = container;
         this.events = events;
 
-        this.closeButton = this.container.querySelector('.modal__close')!;
-        this.contentElement = this.container.querySelector('.modal__content')!;
+        this.closeButton = this.container.querySelector('.modal__close') !;
+        this.contentElement = this.container.querySelector('.modal__content') !;
         this.overlayElement = this.container;
 
         this.closeButton.addEventListener('click', () => this.close());
@@ -20,12 +22,12 @@ export class Modal {
         this.contentElement.addEventListener('click', (event) => event.stopPropagation());
     }
 
-    
+
     isOpen(): boolean {
         return this.container.classList.contains('modal_active');
-    }    
-    
-    open(content?: HTMLElement): void {
+    }
+
+    open(content ? : HTMLElement): void {
         if (content) {
             this.setContent(content);
         }
@@ -48,7 +50,7 @@ export class Modal {
         }
     }
 
-    render(content?: HTMLElement): HTMLElement {
+    render(content ? : HTMLElement): HTMLElement {
         if (content) {
             this.setContent(content);
         }

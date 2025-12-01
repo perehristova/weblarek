@@ -1,4 +1,6 @@
-import { IEvents } from '../../base/Events';
+import {
+    IEvents
+} from '../../base/Events';
 
 interface ISuccessModalData {
     total: number;
@@ -14,20 +16,18 @@ export class SuccessModal {
         this.container = container;
         this.events = events;
 
-        this.closeButton = this.container.querySelector('.order-success__close')!;
-        this.descriptionElement = this.container.querySelector('.order-success__description')!;
+        this.closeButton = this.container.querySelector('.order-success__close') !;
+        this.descriptionElement = this.container.querySelector('.order-success__description') !;
 
         this.closeButton.addEventListener('click', () => {
             this.events.emit('success:close');
         });
     }
 
-    // СЕТТЕР для данных
     set data(value: ISuccessModalData) {
         this.descriptionElement.textContent = `Списано ${value.total} синапсов`;
     }
 
-    // МЕТОД для обратной совместимости
     render(data: ISuccessModalData): HTMLElement {
         this.data = data;
         return this.container;

@@ -1,9 +1,9 @@
-import { 
-    IBuyer, 
+import {
+    IBuyer,
     IValidationErrors
-} from '../../../types'; 
-import { 
-    IEvents 
+} from '../../../types';
+import {
+    IEvents
 } from '../../base/Events';
 
 export class Buyer {
@@ -19,7 +19,7 @@ export class Buyer {
         this.events = events;
     }
 
-    setData(data: Partial<IBuyer>): void {
+    setData(data: Partial < IBuyer > ): void {
         this.data = {
             ...this.data,
             ...data
@@ -28,7 +28,9 @@ export class Buyer {
     }
 
     getData(): IBuyer {
-        return { ...this.data };
+        return {
+            ...this.data
+        };
     }
 
     clear(): void {

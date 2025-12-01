@@ -1,7 +1,15 @@
-import { Card } from '../base/Card';
-import { IProduct } from '../../../types';
-import { IEvents } from '../../base/Events';
-import { CDN_URL } from '../../../utils/constants';
+import {
+    Card
+} from '../base/Card';
+import {
+    IProduct
+} from '../../../types';
+import {
+    IEvents
+} from '../../base/Events';
+import {
+    CDN_URL
+} from '../../../utils/constants';
 
 export class CatalogCard extends Card {
     protected events: IEvents;
@@ -14,8 +22,8 @@ export class CatalogCard extends Card {
 
         this.events = events;
         this.button = this.container.querySelector('.card__button') as HTMLButtonElement;
-        this.categoryElement = this.container.querySelector('.card__category')!;
-        this.imageElement = this.container.querySelector('.card__image')!;
+        this.categoryElement = this.container.querySelector('.card__category') !;
+        this.imageElement = this.container.querySelector('.card__image') !;
     }
 
     set product(value: IProduct) {
@@ -36,21 +44,23 @@ export class CatalogCard extends Card {
 
     render(product: IProduct): HTMLElement {
         this.product = product;
-        
+
         if (this.button) {
             this.button.onclick = (e) => {
                 e.stopPropagation();
-                this.events.emit('card:add', { 
+                this.events.emit('card:add', {
                     id: product.id,
-                    fromModal: false 
+                    fromModal: false
                 });
             };
         }
 
         this.container.onclick = () => {
-            this.events.emit('card:select', { id: product.id });
+            this.events.emit('card:select', {
+                id: product.id
+            });
         };
-        
+
         return this.container;
     }
 }

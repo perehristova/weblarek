@@ -1,4 +1,6 @@
-import { IEvents } from '../../base/Events';
+import {
+    IEvents
+} from '../../base/Events';
 
 export class CartView {
     protected container: HTMLElement;
@@ -10,7 +12,7 @@ export class CartView {
     constructor(events: IEvents, container: HTMLElement) {
         this.container = container;
         this.events = events;
-        
+
         // Поиск элементов СТРОГО внутри container
         this._list = this.container.querySelector('.basket__list') as HTMLElement;
         this._total = this.container.querySelector('.basket__price') as HTMLElement;

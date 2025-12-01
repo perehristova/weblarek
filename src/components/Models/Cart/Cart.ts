@@ -1,9 +1,9 @@
-import { 
-    IProduct 
-} from '../../../types'; 
-import { 
-    IEvents 
-} from '../../base/Events'; 
+import {
+    IProduct
+} from '../../../types';
+import {
+    IEvents
+} from '../../base/Events';
 
 export class Cart {
     private items: IProduct[] = [];
