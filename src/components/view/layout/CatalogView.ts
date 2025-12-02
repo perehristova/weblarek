@@ -9,7 +9,7 @@ export class CatalogView {
         this.container.replaceChildren(...items);
     }
 
-    render(items?: HTMLElement[]): HTMLElement {
+    render(items ? : HTMLElement[]): HTMLElement {
         if (items !== undefined) {
             this.items = items;
         }

@@ -5,8 +5,8 @@ export abstract class Card {
 
     constructor(container: HTMLElement) {
         this.container = container;
-        this.titleElement = this.container.querySelector('.card__title')!;
-        this.priceElement = this.container.querySelector('.card__price')!;
+        this.titleElement = this.container.querySelector('.card__title') !;
+        this.priceElement = this.container.querySelector('.card__price') !;
     }
 
     // Базовые методы

@@ -28,7 +28,7 @@ export class SuccessModal {
         this.descriptionElement.textContent = `Списано ${value.total} синапсов`;
     }
 
-    render(data?: ISuccessModalData): HTMLElement {
+    render(data ? : ISuccessModalData): HTMLElement {
         if (data) {
             this.data = data;
         }

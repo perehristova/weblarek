@@ -383,7 +383,6 @@ export interface IApi {
 `open(content?: HTMLElement): void` - открытие окна
 `close(): void` - закрытие окна
 `setContent(content: HTMLElement): void` - установка содержимого
-`isOpen(): boolean` - проверка открыто ли окно
 
 #### Класс (SuccessModal)
 

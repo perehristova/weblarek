@@ -1,7 +1,16 @@
-import { Card } from '../base/Card';
-import { IProduct } from '../../../types';
-import { IEvents } from '../../base/Events';
-import { CDN_URL, categoryMap } from '../../../utils/constants';
+import {
+    Card
+} from '../base/Card';
+import {
+    IProduct
+} from '../../../types';
+import {
+    IEvents
+} from '../../base/Events';
+import {
+    CDN_URL,
+    categoryMap
+} from '../../../utils/constants';
 
 export class CatalogCard extends Card {
     protected events: IEvents;
@@ -13,11 +22,13 @@ export class CatalogCard extends Card {
         super(container);
 
         this.events = events;
-        this.categoryElement = this.container.querySelector('.card__category')!;
-        this.imageElement = this.container.querySelector('.card__image')!;
-        
+        this.categoryElement = this.container.querySelector('.card__category') !;
+        this.imageElement = this.container.querySelector('.card__image') !;
+
         this.container.addEventListener('click', () => {
-            this.events.emit('card:select', { id: this._id });
+            this.events.emit('card:select', {
+                id: this._id
+            });
         });
     }
 
@@ -31,10 +42,10 @@ export class CatalogCard extends Card {
 
     private setCategory(category: string): void {
         this.categoryElement.textContent = category;
-        
+
         const modifierClass = categoryMap[category as keyof typeof categoryMap];
 
-        this.categoryElement.className = 'card__category'; 
+        this.categoryElement.className = 'card__category';
 
         if (modifierClass) {
             this.categoryElement.classList.add(modifierClass);
