@@ -1,15 +1,7 @@
-import {
-    Card
-} from '../base/Card';
-import {
-    IProduct
-} from '../../../types';
-import {
-    IEvents
-} from '../../base/Events';
-import {
-    CDN_URL
-} from '../../../utils/constants';
+import { Card } from '../base/Card';
+import { IProduct } from '../../../types';
+import { IEvents } from '../../base/Events';
+import { CDN_URL, categoryMap } from '../../../utils/constants';
 
 export class PreviewCard extends Card {
     protected events: IEvents;
@@ -17,30 +9,22 @@ export class PreviewCard extends Card {
     protected descriptionElement: HTMLElement;
     protected categoryElement: HTMLElement;
     protected imageElement: HTMLImageElement;
-    protected _productId: string = '';
 
     constructor(events: IEvents, container: HTMLElement) {
         super(container);
 
         this.events = events;
-        this.button = this.container.querySelector('.card__button') !;
-        this.descriptionElement = this.container.querySelector('.card__text') !;
-        this.categoryElement = this.container.querySelector('.card__category') !;
-        this.imageElement = this.container.querySelector('.card__image') !;
+        this.button = this.container.querySelector('.card__button')!;
+        this.descriptionElement = this.container.querySelector('.card__text')!;
+        this.categoryElement = this.container.querySelector('.card__category')!;
+        this.imageElement = this.container.querySelector('.card__image')!;
 
-        this.setupEventListeners();
-    }
-
-    private setupEventListeners(): void {
         this.button.addEventListener('click', () => {
-            this.events.emit('preview:button-click', {
-                id: this._productId
-            });
+            this.events.emit('preview:button-click');
         });
     }
 
     set product(value: IProduct) {
-        this._productId = value.id;
         this.setTitle(value.title);
         this.setPrice(value.price);
         this.setDescription(value.description);
@@ -62,6 +46,14 @@ export class PreviewCard extends Card {
 
     private setCategory(category: string): void {
         this.categoryElement.textContent = category;
+        
+        const modifierClass = categoryMap[category as keyof typeof categoryMap];
+
+        this.categoryElement.className = 'card__category';
+
+        if (modifierClass) {
+            this.categoryElement.classList.add(modifierClass);
+        }
     }
 
     private setImage(src: string, alt: string): void {

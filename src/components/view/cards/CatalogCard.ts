@@ -1,32 +1,28 @@
-import {
-    Card
-} from '../base/Card';
-import {
-    IProduct
-} from '../../../types';
-import {
-    IEvents
-} from '../../base/Events';
-import {
-    CDN_URL
-} from '../../../utils/constants';
+import { Card } from '../base/Card';
+import { IProduct } from '../../../types';
+import { IEvents } from '../../base/Events';
+import { CDN_URL, categoryMap } from '../../../utils/constants';
 
 export class CatalogCard extends Card {
     protected events: IEvents;
-    protected button: HTMLButtonElement;
     protected categoryElement: HTMLElement;
     protected imageElement: HTMLImageElement;
+    protected _id!: string;
 
     constructor(events: IEvents, container: HTMLElement) {
         super(container);
 
         this.events = events;
-        this.button = this.container.querySelector('.card__button') as HTMLButtonElement;
-        this.categoryElement = this.container.querySelector('.card__category') !;
-        this.imageElement = this.container.querySelector('.card__image') !;
+        this.categoryElement = this.container.querySelector('.card__category')!;
+        this.imageElement = this.container.querySelector('.card__image')!;
+        
+        this.container.addEventListener('click', () => {
+            this.events.emit('card:select', { id: this._id });
+        });
     }
 
     set product(value: IProduct) {
+        this._id = value.id;
         this.setTitle(value.title);
         this.setPrice(value.price);
         this.setCategory(value.category);
@@ -35,6 +31,14 @@ export class CatalogCard extends Card {
 
     private setCategory(category: string): void {
         this.categoryElement.textContent = category;
+        
+        const modifierClass = categoryMap[category as keyof typeof categoryMap];
+
+        this.categoryElement.className = 'card__category'; 
+
+        if (modifierClass) {
+            this.categoryElement.classList.add(modifierClass);
+        }
     }
 
     private setImage(src: string, alt: string): void {
@@ -44,23 +48,6 @@ export class CatalogCard extends Card {
 
     render(product: IProduct): HTMLElement {
         this.product = product;
-
-        if (this.button) {
-            this.button.onclick = (e) => {
-                e.stopPropagation();
-                this.events.emit('card:add', {
-                    id: product.id,
-                    fromModal: false
-                });
-            };
-        }
-
-        this.container.onclick = () => {
-            this.events.emit('card:select', {
-                id: product.id
-            });
-        };
-
         return this.container;
     }
 }

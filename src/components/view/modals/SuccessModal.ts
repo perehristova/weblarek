@@ -28,8 +28,10 @@ export class SuccessModal {
         this.descriptionElement.textContent = `Списано ${value.total} синапсов`;
     }
 
-    render(data: ISuccessModalData): HTMLElement {
-        this.data = data;
+    render(data?: ISuccessModalData): HTMLElement {
+        if (data) {
+            this.data = data;
+        }
         return this.container;
     }
 }
