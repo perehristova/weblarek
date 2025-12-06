@@ -12,6 +12,12 @@ import {
     categoryMap
 } from '../../../utils/constants';
 
+// Интерфейс для данных, которые принимает render
+interface IPreviewCardRenderData extends IProduct {
+    buttonText: string;
+    buttonDisabled: boolean;
+}
+
 export class PreviewCard extends Card {
     protected events: IEvents;
     protected button: HTMLButtonElement;
@@ -33,12 +39,14 @@ export class PreviewCard extends Card {
         });
     }
 
-    set product(value: IProduct) {
-        this.setTitle(value.title);
-        this.setPrice(value.price);
-        this.setDescription(value.description);
-        this.setCategory(value.category);
-        this.setImage(value.image, value.title);
+    set data(value: Partial<IPreviewCardRenderData>) {
+        if (value.title) this.setTitle(value.title);
+        if (value.price !== undefined) this.setPrice(value.price);
+        if (value.description) this.setDescription(value.description);
+        if (value.category) this.setCategory(value.category);
+        if (value.image && value.title) this.setImage(value.image, value.title);
+        if (value.buttonText) this.buttonText = value.buttonText;
+        if (value.buttonDisabled !== undefined) this.buttonDisabled = value.buttonDisabled;
     }
 
     set buttonText(value: string) {
@@ -70,10 +78,10 @@ export class PreviewCard extends Card {
         this.imageElement.alt = alt;
     }
 
-    render(product: IProduct, buttonText: string, buttonDisabled: boolean): HTMLElement {
-        this.product = product;
-        this.buttonText = buttonText;
-        this.buttonDisabled = buttonDisabled;
+    render(data?: Partial<IPreviewCardRenderData>): HTMLElement {
+        if (data) {
+            this.data = data;
+        }
         return this.container;
     }
 }

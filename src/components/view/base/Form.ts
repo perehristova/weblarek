@@ -37,8 +37,4 @@ export abstract class Form < T > {
         this.errorsElement.textContent = errorText;
         this.submitButton.disabled = errorText.length > 0;
     }
-
-    render(_data ? : T): HTMLElement {
-        return this.container;
-    }
 }

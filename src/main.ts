@@ -59,6 +59,7 @@ import {
     PreviewCard
 } from './components/view/cards/PreviewCard';
 
+
 // Инициализация 
 const events = new EventEmitter();
 const baseApi = new Api(API_URL);
@@ -93,16 +94,14 @@ const previewCard = new PreviewCard(events, previewElement);
 events.on('catalog:changed', (products: IProduct[]) => {
     const cardElements = products.map(product => {
         const cardElement = cloneTemplate < HTMLElement > ('#card-catalog');
-        const card = new CatalogCard(events, cardElement);
-        return card.render(product);
+        const card = new CatalogCard(events, cardElement, product.id); 
+        return card.render(product); 
     });
     catalogView.items = cardElements;
 });
 
 // Открытие превью товара 
-events.on('card:select', (data: {
-    id: string
-}) => {
+events.on('card:select', (data: { id: string }) => {
     const product = catalogModel.getProductById(data.id);
     if (product) {
         catalogModel.setSelectedProduct(product);
@@ -110,13 +109,19 @@ events.on('card:select', (data: {
         const inCart = cartModel.contains(product.id);
         let buttonText = 'Купить';
         let buttonDisabled = false;
+
         if (!product.price) {
             buttonText = 'Недоступно';
             buttonDisabled = true;
         } else if (inCart) {
             buttonText = 'Удалить из корзины';
         }
-        previewCard.render(product, buttonText, buttonDisabled);
+
+        previewCard.render({
+            ...product,
+            buttonText,
+            buttonDisabled
+        });
         modal.open(previewElement);
     }
 });
@@ -134,7 +139,8 @@ events.on('cart:changed', () => {
     // 2. Генерируем элементы для списка корзины
     const cardElements = items.map((item, index) => {
         const cardElement = cloneTemplate < HTMLElement > ('#card-basket');
-        const card = new CartCard(events, cardElement);
+        const card = new CartCard(events, cardElement, item.id);
+        
         return card.render({
             product: item,
             index: index
@@ -146,26 +152,22 @@ events.on('cart:changed', () => {
     cartView.total = total;
 });
 
-events.on('card:add', (data: {
-    id: string
-}) => {
+// Добавление товара в модель
+events.on('card:add', (data: { id: string }) => {
     const product = catalogModel.getProductById(data.id);
     if (product && product.price) {
         cartModel.addItem(product);
     }
 });
 
-// Удаление товара из корзины 
-events.on('card:remove', (data: {
-    id: string
-}) => {
+// Удаление товара из модели
+events.on('card:remove', (data: { id: string }) => {
     const product = catalogModel.getProductById(data.id);
     if (product) {
         cartModel.removeItem(product);
     }
 });
 
-// Обработка кнопки в превью
 events.on('preview:button-click', () => {
     const currentProduct = catalogModel.getSelectedProduct();
 
@@ -175,20 +177,6 @@ events.on('preview:button-click', () => {
         } else {
             cartModel.addItem(currentProduct);
         }
-
-        const isInCart = cartModel.contains(currentProduct.id);
-
-        let buttonText = 'Купить';
-        let buttonDisabled = currentProduct.price === null;
-
-        if (currentProduct.price === null) {
-            buttonText = 'Недоступно';
-        } else if (isInCart) {
-            buttonText = 'Удалить из корзины';
-        }
-
-        previewCard.buttonText = buttonText;
-        previewCard.buttonDisabled = buttonDisabled;
     }
 });
 
@@ -200,59 +188,34 @@ events.on('basket:open', () => {
 events.on('cart:checkout', () => {
     modal.close();
 
-    try {
-        buyerModel.setData({
-            payment: buyerModel.getData().payment,
-            address: buyerModel.getData().address
-        });
-
-        const errors = buyerModel.validate();
-        paymentForm.setErrors(errors);
-
+    try { 
         modal.open(paymentForm.render(buyerModel.getData()));
-
     } catch (error) {
         console.error('Ошибка при открытии формы оплаты:', error);
     }
 });
 
 // --- ОБРАБОТКА ФОРМ --- 
-events.on('payment:method:click', (data: {
-    method: TPayment
-}) => {
-    buyerModel.setData({
-        payment: data.method
-    });
+events.on('payment:method:click', (data: { method: TPayment }) => {
+    buyerModel.setData({ payment: data.method });
 });
 
-events.on('payment:address:input', (data: {
-    address: string
-}) => {
-    buyerModel.setData({
-        address: data.address
-    });
+events.on('payment:address:input', (data: { address: string }) => {
+    buyerModel.setData({ address: data.address });
 });
 
-events.on('contact:email:input', (data: {
-    email: string
-}) => {
-    buyerModel.setData({
-        email: data.email
-    });
+events.on('contact:email:input', (data: { email: string }) => {
+    buyerModel.setData({ email: data.email });
 });
 
-events.on('contact:phone:input', (data: {
-    phone: string
-}) => {
-    buyerModel.setData({
-        phone: data.phone
-    });
+events.on('contact:phone:input', (data: { phone: string }) => {
+    buyerModel.setData({ phone: data.phone });
 });
 
-// Обновление данных покупателя
 events.on('buyer:changed', (data: IBuyer) => {
     paymentForm.render(data);
     contactForm.render(data);
+
     const errors = buyerModel.validate();
     paymentForm.setErrors({
         payment: errors.payment,
@@ -267,12 +230,11 @@ events.on('buyer:changed', (data: IBuyer) => {
 // Отправка формы оплаты
 events.on('payment:form:submit', () => {
     modal.close();
-    const contactData = buyerModel.getData();
-    const contactElement = contactForm.render(contactData as any);
+    const contactElement = contactForm.render(buyerModel.getData());
     modal.open(contactElement);
 });
 
-// Отправка формы контактов
+// Отправка формы контактов 
 events.on('contact:form:submit', async () => {
     try {
         const orderData = {
@@ -304,12 +266,10 @@ events.on('contact:form:submit', async () => {
 events.on('modal:close', () => {
     modal.close();
     catalogModel.setSelectedProduct(null);
-    document.body.classList.remove('locked');
 });
 
 // Открытие модального окна
 events.on('modal:open', () => {
-    document.body.classList.add('locked');
 });
 
 // Закрытие успешного заказа 
