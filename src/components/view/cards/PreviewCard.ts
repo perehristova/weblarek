@@ -39,7 +39,7 @@ export class PreviewCard extends Card {
         });
     }
 
-    set data(value: Partial<IPreviewCardRenderData>) {
+    set data(value: Partial < IPreviewCardRenderData > ) {
         if (value.title) this.setTitle(value.title);
         if (value.price !== undefined) this.setPrice(value.price);
         if (value.description) this.setDescription(value.description);
@@ -78,7 +78,7 @@ export class PreviewCard extends Card {
         this.imageElement.alt = alt;
     }
 
-    render(data?: Partial<IPreviewCardRenderData>): HTMLElement {
+    render(data ? : Partial < IPreviewCardRenderData > ): HTMLElement {
         if (data) {
             this.data = data;
         }

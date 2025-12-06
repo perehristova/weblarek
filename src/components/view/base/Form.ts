@@ -31,6 +31,10 @@ export abstract class Form < T > {
 
     protected abstract handleSubmit(): void;
 
+    public clearErrors(): void {
+        this.errorsElement.textContent = '';
+    }
+
     public setErrors(errors: Partial < IValidationErrors > ): void {
         const errorText = Object.values(errors).filter(Boolean).join('; ');
 

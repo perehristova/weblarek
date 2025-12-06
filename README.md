@@ -285,11 +285,11 @@ export interface IApi {
 
 Карточка товара в каталоге. Наследуется от Card.
 
-Конструктор: `constructor(events: IEvents, container: HTMLElement)`
+Конструктор: `constructor(events: IEvents, container: HTMLElement, id: string)`
 
 Методы:
 `set product(value: IProduct)` - сеттер для данных товара
-`render(product: IProduct): HTMLElement` - отображение карточки
+`render(product: IProduct): HTMLElement` - требует обязательный параметр
 Генерирует события: `card:select, card:add`
 
 #### Класс (PreviewCard)
@@ -309,12 +309,12 @@ export interface IApi {
 
 Карточка товара в корзине. Наследуется от Card.
 
-Конструктор: `constructor(events: IEvents, container: HTMLElement)`
+Конструктор: `constructor(events: IEvents, container: HTMLElement, id: string`
 
 Методы:
 `set product(value: IProduct)` - сеттер для данных товара
 `set index(value: number)` - сеттер для индекса
-`render(data: { product: IProduct; index: number }): HTMLElement` - отображение
+`render(data: { product: IProduct; index: number }): HTMLElement` - требует обязательный параметр
 Генерирует событие: `card:remove`
 
 ### Формы
@@ -326,7 +326,6 @@ export interface IApi {
 Конструктор: `constructor(events: IEvents, container: HTMLElement)`
 
 Методы:
-`render(data: Partial<Pick<IBuyer, 'payment' | 'address'>>): HTMLElement` - отображение
 Генерирует события: `payment:method:click, payment:address:input, payment:form:submit`
 
 #### Класс (ContactForm)
@@ -411,7 +410,7 @@ export interface IApi {
 
 * `catalog:changed` - обновление каталога
 
-* `cart:changed` - изменение корзины
+* `cart:changed` - изменение корзины (также обновляет открытое превью товара)
 
 * `buyer:changed` - изменение данных покупателя
 

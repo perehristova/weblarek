@@ -2,10 +2,10 @@ import {
     Card
 } from '../base/Card';
 import {
-    IProduct 
+    IProduct
 } from '../../../types';
 import {
-    IEvents 
+    IEvents
 } from '../../base/Events';
 
 // Интерфейс для данных, которые Card ожидает в методе render
@@ -19,7 +19,7 @@ export class CartCard extends Card {
     protected deleteButton: HTMLButtonElement;
     protected indexElement: HTMLElement;
 
-    constructor(events: IEvents, container: HTMLElement, id: string) { 
+    constructor(events: IEvents, container: HTMLElement, id: string) {
         super(container);
         this.events = events;
 
@@ -28,20 +28,20 @@ export class CartCard extends Card {
 
         this.deleteButton.addEventListener('click', () => {
             this.events.emit('card:remove', {
-                id: id 
+                id: id
             });
         });
     }
 
     set index(value: number) {
-        this.indexElement.textContent = String(value + 1); 
+        this.indexElement.textContent = String(value + 1);
     }
 
-    render(data?: ICartCardData): HTMLElement {
+    render(data ? : ICartCardData): HTMLElement {
         if (data) {
             this.setTitle(data.product.title);
             this.setPrice(data.product.price);
-            
+
             this.index = data.index;
         }
 
